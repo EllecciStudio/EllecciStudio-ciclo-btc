@@ -18,7 +18,10 @@ Luigi non è uno sviluppatore: spiegagli tutto in italiano semplice. Non invia o
 - Esito della prova (21/11/2026): nessuna variante passa. La fascia bassa funziona (rischio < 0,2 → un anno dopo in guadagno 95 volte su 100,
   mediana +121% contro +56%), la fascia alta no (sopra 0,8 mediana +146%). L'app lo dice chiaramente: utile per i prezzi bassi, non per vendere.
 - Stile: kit Ellecci (`DESIGN.md` degli altri progetti, skill `ellecci-design-system`), due temi come le altre app: `vetro` scuro predefinito
-  (luce «marea» azzurra che sale dal basso) e `chiaro`; scelta in `localStorage` `cd_tema`. Movimento «da dashboard», niente doppio asse nei grafici.
+  e `chiaro`; scelta in `localStorage` `cd_tema`. Dal 21/11/2026 stile delle ultime app («quadrante a marea»): luce azzurra che respira dietro il quadrante
+  (`body::before`, animazione `cdRespiro`) + riflesso viola in basso (`body::after`), scheda principale `.scheda.vetro` in vetro colorato azzurro, le altre schede
+  smerigliate con un filo azzurro sul bordo alto, numeri eroe Unbounded 400. Movimento «da dashboard», niente doppio asse nei grafici.
+- Online: https://elleccistudio.github.io/EllecciStudio-ciclo-btc/ (GitHub Pages dal ramo `main`, attivato da Luigi il 21/11/2026).
 
 ## Dove sono le cose
 - `index.html`: tutta l'app (HTML, CSS, JS), grafici con `lib/chart.umd.js` (Chart.js 4.4.1 locale). Pagine con l'hash: `#oggi`, `#rischio`, `#medie`, `#interesse`, `#potenza`.
