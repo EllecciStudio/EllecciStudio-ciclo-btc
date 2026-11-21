@@ -50,11 +50,10 @@ html[data-tema="chiaro"] body::before{opacity:.06; filter:invert(1)}
 .banda{position:absolute; z-index:0; left:0; right:0; top:0; height:540px; overflow:hidden; pointer-events:none;
   background:linear-gradient(162deg, #0E6FA3 0%, #0A4C73 42%, var(--bg) 100%)}
 html[data-tema="chiaro"] .banda{background:linear-gradient(162deg, #8DD0F5 0%, #C4E6F9 42%, var(--bg) 100%)}
-.banda svg{position:absolute; right:190px; top:42px; width:170px; height:170px; fill:none; stroke:#A8DFFF; stroke-linecap:round;
-  }
+.banda svg{position:absolute; right:-360px; top:-420px; width:1300px; height:1300px; fill:none; stroke:#A8DFFF; stroke-linecap:round;
+  -webkit-mask-image:linear-gradient(180deg, #000 30%, transparent 62%); mask-image:linear-gradient(180deg, #000 30%, transparent 62%)}
 html[data-tema="chiaro"] .banda svg{stroke:#0A7EC6}
-@media (max-width:1100px){ .banda svg{right:96px; top:34px; width:150px; height:150px} }
-@media (max-width:760px){ .banda{height:430px} .banda svg{right:64px; top:-6px; width:84px; height:84px; opacity:.7} }
+@media (max-width:760px){ .banda{height:430px} .banda svg{right:-520px; top:-380px; width:1000px; height:1000px} }
 .intesta .sotto, .intesta .etic{color:rgba(233,236,241,.84)}
 html[data-tema="chiaro"] .intesta .sotto, html[data-tema="chiaro"] .intesta .etic{color:#24384A}
 /* vetro solo dove dietro c'è la fascia: il primo blocco di schede di ogni pagina.
@@ -76,10 +75,15 @@ header.testa{display:flex; align-items:center; justify-content:space-between; ga
 /* sul computer la barra delle sezioni resta sempre in alto mentre scorri (21/11/2026, richiesta di Luigi) */
 @media (min-width:761px){
   html, body{overflow-x:clip}
-  /* solo l'isola delle sezioni resta fissa (Luigi, 21/11/2026 sera): logo e tema scorrono via con la pagina */
-  header.testa{min-height:48px}
-  .testa nav.menu{position:fixed; z-index:25; top:20px; left:50%; transform:translateX(-50%);
-    transition:background-color .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease)}
+  /* barra in alto fissa (Luigi, 21/11/2026 sera): un rettangolo di vetro trasparente su tutta la larghezza con logo a sinistra e tema a destra,
+     e l'isola delle sezioni al centro che diventa anche lei un po' trasparente quando la pagina scorre */
+  header.testa{position:sticky; top:0; z-index:25; padding:12px 0; margin-bottom:12px}
+  header.testa::before{content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; width:100vw; transform:translateX(-50%);
+    background:rgba(8,12,14,.42); -webkit-backdrop-filter:blur(18px) saturate(140%); backdrop-filter:blur(18px) saturate(140%);
+    border-bottom:1px solid rgba(255,255,255,.08); opacity:0; transition:opacity .25s var(--ease)}
+  html[data-tema="chiaro"] header.testa::before{background:rgba(241,244,246,.55); border-bottom-color:rgba(15,23,42,.08)}
+  header.testa.scorre::before{opacity:1}
+  .testa nav.menu{transition:background-color .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease)}
   .testa nav.menu.scorre{background:rgba(16,21,23,.78); border-color:rgba(255,255,255,.14); box-shadow:0 10px 30px rgba(0,0,0,.35);
     -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%)}
   html[data-tema="chiaro"] .testa nav.menu.scorre{background:rgba(255,255,255,.82); border-color:rgba(15,23,42,.10); box-shadow:0 10px 30px rgba(15,23,42,.10)}
@@ -222,7 +226,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
 .entra{opacity:0; transform:translateY(8px); filter:blur(4px)}
 .entra.dentro{opacity:1; transform:none; filter:none; transition:opacity .45s var(--ease), transform .55s var(--ease), filter .45s var(--ease)}
 ::view-transition-old(root), ::view-transition-new(root){animation:none; mix-blend-mode:normal}
-::view-transition-new(root){animation:cerchio .38s var(--ease)}
+::view-transition-new(root){animation:cerchio .75s cubic-bezier(0.45, 0, 0.25, 1)}
 @keyframes cerchio{from{clip-path:circle(0 at var(--cx,50%) var(--cy,50%))} to{clip-path:circle(150vmax at var(--cx,50%) var(--cy,50%))}}
 @media (prefers-reduced-motion: reduce){
   .entra{transform:none; filter:none}
@@ -232,7 +236,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
 </style>
 </head>
 <body>
-<div class="banda" aria-hidden="true"><svg viewBox="0 0 600 600"><path d="M354 255A70 70 0 1 0 354 345" stroke-width="5" style="opacity:0.62"/><path d="M377 236A100 100 0 1 0 377 364" stroke-width="5" style="opacity:0.57"/><path d="M400 216A130 130 0 1 0 400 384" stroke-width="22" style="opacity:0.95"/><path d="M423 197A160 160 0 1 0 423 403" stroke-width="5" style="opacity:0.47"/><path d="M446 178A190 190 0 1 0 446 422" stroke-width="5" style="opacity:0.42"/><path d="M469 159A220 220 0 1 0 469 441" stroke-width="5" style="opacity:0.37"/><path d="M492 139A250 250 0 1 0 492 461" stroke-width="5" style="opacity:0.32"/></svg></div>
+<div class="banda" aria-hidden="true"><svg viewBox="0 0 1300 1300"><path d="M784 516A190 190 0 1 0 784 784" stroke-width="2.0" style="opacity:0.66"/><path d="M825 475A248 248 0 1 0 825 825" stroke-width="1.83" style="opacity:0.6"/><path d="M866 434A306 306 0 1 0 866 866" stroke-width="6.5" style="opacity:0.54"/><path d="M907 393A364 364 0 1 0 907 907" stroke-width="1.49" style="opacity:0.48"/><path d="M948 352A422 422 0 1 0 948 948" stroke-width="1.32" style="opacity:0.42"/><path d="M989 311A480 480 0 1 0 989 989" stroke-width="3.2" style="opacity:0.36"/><path d="M1030 270A538 538 0 1 0 1030 1030" stroke-width="0.98" style="opacity:0.3"/><path d="M1071 229A596 596 0 1 0 1071 1071" stroke-width="0.81" style="opacity:0.24"/></svg></div>
 <div class="app">
   <header class="testa">
     <a class="marchio" href="#oggi" aria-label="CycleDial, pagina Oggi">
@@ -1042,8 +1046,8 @@ document.querySelectorAll(".segmenti").forEach(seg=>seg.addEventListener("click"
   if(seg.dataset.periodo==="potenza"){ vistaPot = b.dataset.da; graficoPotenza(); }
 }));
 
-const isola = document.querySelector("header.testa nav.menu");
-const segnaScorre = () => isola.classList.toggle("scorre", window.scrollY > 8);
+const testa = document.querySelector("header.testa"), isola = testa.querySelector("nav.menu");
+const segnaScorre = () => { const s = window.scrollY > 8; testa.classList.toggle("scorre", s); isola.classList.toggle("scorre", s); };
 window.addEventListener("scroll", segnaScorre, {passive:true}); segnaScorre();
 
 (async function avvio(){
