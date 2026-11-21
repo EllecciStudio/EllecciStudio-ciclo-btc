@@ -91,6 +91,17 @@ TRADUZIONI = {
     "Empire State Manufacturing Index": "Indice manifatturiero di New York", "Philly Fed Manufacturing Index": "Indice manifatturiero di Philadelphia",
     "Trade Balance": "Bilancia commerciale", "Bank Holiday": "Festa: mercati USA chiusi",
 }
+def traduci_discorso(titolo):
+    """«Fed Chairman Warsh Speaks», «FOMC Member Waller Speaks», «President Trump Speaks», … → italiano."""
+    import re
+    m = re.match(r"^(Fed Chair(?:man)?|FOMC Member|Fed Vice Chair(?:man)?(?: for Supervision)?|President|Treasury Secretary) ?(.*?) Speaks$", titolo)
+    if not m:
+        return None
+    ruoli = {"President": "presidente degli Stati Uniti", "FOMC Member": "membro della Fed", "Treasury Secretary": "segretario al Tesoro"}
+    ruolo = ruoli.get(m.group(1), "vicepresidente della Fed" if "Vice" in m.group(1) else "presidente della Fed")
+    return f"Discorso del {ruolo}" + (f" ({m.group(2)})" if m.group(2) else "")
+
+
 GIORNI = ["Lun", "Mar", "Mer", "Gio", "Ven", "Sab", "Dom"]
 
 
@@ -109,8 +120,9 @@ def calendario(precedente):
         except (KeyError, ValueError):
             continue
         titolo = x.get("title", "")
+        italiano = TRADUZIONI.get(titolo) or traduci_discorso(titolo)
         eventi.append({"quando": quando.isoformat(), "giorno": GIORNI[quando.weekday()], "ora": quando.strftime("%H:%M"),
-                       "titolo": TRADUZIONI.get(titolo, titolo), "originale": titolo,
+                       "titolo": italiano or titolo, "originale": titolo,
                        "importanza": "alta" if x["impact"] == "High" else "media",
                        "previsto": x.get("forecast") or "", "precedente": x.get("previous") or ""})
     return {"aggiornato": datetime.now(ROMA).isoformat(timespec="minutes"), "eventi": sorted(eventi, key=lambda e: e["quando"])}
