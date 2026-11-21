@@ -169,6 +169,7 @@ html[data-tema="chiaro"] .segmenti button[aria-pressed="true"]{background:#0E111
 footer.piede{margin-top:40px; display:flex; flex-wrap:wrap; justify-content:space-between; gap:12px; align-items:center; color:var(--ink3); font-size:.75rem; border-top:1px solid var(--riga); padding-top:16px}
 footer .studio{display:flex; align-items:center; gap:8px; color:var(--ink2)}
 footer .studio img{width:22px; height:22px; border-radius:50%}
+footer .firma{display:flex; flex-direction:column; line-height:1.25} footer .firma b{color:var(--ink); font-weight:600}
 html[data-tema="chiaro"] footer .studio img{filter:invert(1)}
 
 .avviso{position:fixed; z-index:30; left:50%; bottom:calc(92px + env(safe-area-inset-bottom, 0px)); transform:translate(-50%, 12px); opacity:0; pointer-events:none;
@@ -417,7 +418,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
   </section>
 
   <footer class="piede">
-    <div class="studio"><img src="assets/ellecci-studio.png" alt="Logo Ellecci Studio"><span>CycleDial · Ellecci Studio</span></div>
+    <div class="studio"><img src="assets/ellecci-studio.png" alt="Logo Ellecci Studio"><span class="firma"><b>CycleDial</b><span>Ellecci Studio</span></span></div>
     <div id="piede-dati">Dati di mercato pubblici, aggiornati ogni giorno.</div>
   </footer>
 </div>
