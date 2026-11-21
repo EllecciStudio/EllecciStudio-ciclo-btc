@@ -1,0 +1,38 @@
+name: Aggiorna i dati di CycleDial
+# Ogni giorno dopo la chiusura della candela giornaliera (orari UTC). Repository pubblico: i minuti di GitHub Actions sono gratis.
+on:
+  schedule:
+    - cron: "23 1 * * *"
+    - cron: "47 7 * * *"   # riserva, se il primo giro arriva tardi o fallisce
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["dati.py", "calcoli.py", "strumenti/prova_rischio.py", "dati/REGOLE_RISCHIO.md"]
+permissions:
+  contents: write
+concurrency:
+  group: dati
+  cancel-in-progress: false
+jobs:
+  dati:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install pandas numpy requests
+      - name: Prova dell'indice di rischio e dati dell'app
+        run: |
+          python dati.py
+          python strumenti/prova_rischio.py
+          python dati.py --senza-rete
+      - name: Salva i dati
+        run: |
+          git config user.name "Ellecci Studio bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add dati/
+          git diff --cached --quiet && echo "nessun cambiamento" && exit 0
+          git commit -m "Dati del $(date -u +%d/%m/%Y)"
+          for i in 1 2 3; do git pull --rebase -q && git push -q && break; sleep 5; done
