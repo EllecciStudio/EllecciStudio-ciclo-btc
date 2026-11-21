@@ -42,16 +42,32 @@ html[data-tema="chiaro"]{
 html,body{margin:0}
 body{background:var(--bg); color:var(--ink); font:400 15px/1.55 var(--f-s); -webkit-font-smoothing:antialiased; min-height:100vh; overflow-x:hidden}
 /* ===== Kit Ellecci 2 (21/11/2026, scelta di Luigi): niente luci né aloni, schede piene, solo una grana finissima e ferma sul fondo ===== */
-body::before{content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.05;
+body::before{content:""; position:fixed; inset:0; z-index:1; pointer-events:none; opacity:.05;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
 html[data-tema="chiaro"] body::before{opacity:.06; filter:invert(1)}
+/* «vetro sul colore» + «archi della C» (scelta di Luigi, 21/11/2026 sera): una fascia in cima in sfumatura di un solo colore (l'azzurro dell'app),
+   archi fermi aperti a destra come la C del logo, e le schede che stanno sopra la fascia di vetro. Niente macchie di luce. */
+.banda{position:absolute; z-index:0; left:0; right:0; top:0; height:540px; overflow:hidden; pointer-events:none;
+  background:linear-gradient(162deg, #0E6FA3 0%, #0A4C73 42%, var(--bg) 100%)}
+html[data-tema="chiaro"] .banda{background:linear-gradient(162deg, #8DD0F5 0%, #C4E6F9 42%, var(--bg) 100%)}
+.banda svg{position:absolute; right:-520px; top:-420px; width:1300px; height:1300px; fill:none; stroke:#A8DFFF; stroke-linecap:round;
+  -webkit-mask-image:linear-gradient(180deg, #000 30%, transparent 62%); mask-image:linear-gradient(180deg, #000 30%, transparent 62%)}
+html[data-tema="chiaro"] .banda svg{stroke:#0A7EC6}
+@media (max-width:760px){ .banda{height:430px} .banda svg{right:-600px; top:-380px; width:1000px; height:1000px} }
+.intesta .sotto, .intesta .etic{color:rgba(233,236,241,.84)}
+html[data-tema="chiaro"] .intesta .sotto, html[data-tema="chiaro"] .intesta .etic{color:#24384A}
+/* vetro solo dove dietro c'è la fascia: il primo blocco di schede di ogni pagina */
+.pagina > .intesta + * > .scheda{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(20px) saturate(140%); backdrop-filter:blur(20px) saturate(140%)}
+html[data-tema="chiaro"] .pagina > .intesta + * > .scheda{background:rgba(255,255,255,.62); border-color:rgba(255,255,255,.9); box-shadow:0 1px 2px rgba(15,23,42,.06)}
+@media (prefers-reduced-transparency: reduce){ .pagina > .intesta + * > .scheda{-webkit-backdrop-filter:none; backdrop-filter:none; background:var(--card)} }
 ::selection{background:rgba(92,200,255,.28)}
 a{color:var(--acc)}
 button{font:inherit; color:inherit}
 .num{font-family:var(--f-m); font-variant-numeric:tabular-nums}
 .su{color:var(--su)} .giu{color:var(--giu)} .tenue{color:var(--ink2)}
 
-.app{position:relative; z-index:1; margin:0 auto;
+.app{position:relative; z-index:2; margin:0 auto;
   padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:16px 120px}
 header.testa{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0 20px}
 /* sul computer la barra delle sezioni resta sempre in alto mentre scorri (21/11/2026, richiesta di Luigi) */
@@ -211,6 +227,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
 </style>
 </head>
 <body>
+<div class="banda" aria-hidden="true"><svg viewBox="0 0 1300 1300"><path d="M784 516A190 190 0 1 0 784 784" stroke-width="1.4" style="opacity:0.62"/><path d="M825 475A248 248 0 1 0 825 825" stroke-width="1.4" style="opacity:0.56"/><path d="M866 434A306 306 0 1 0 866 866" stroke-width="3.5" style="opacity:0.50"/><path d="M907 393A364 364 0 1 0 907 907" stroke-width="1.4" style="opacity:0.44"/><path d="M948 352A422 422 0 1 0 948 948" stroke-width="1.4" style="opacity:0.38"/><path d="M989 311A480 480 0 1 0 989 989" stroke-width="1.4" style="opacity:0.32"/><path d="M1030 270A538 538 0 1 0 1030 1030" stroke-width="1.4" style="opacity:0.26"/><path d="M1071 229A596 596 0 1 0 1071 1071" stroke-width="1.4" style="opacity:0.20"/></svg></div>
 <div class="app">
   <header class="testa">
     <a class="marchio" href="#oggi" aria-label="CycleDial, pagina Oggi">
