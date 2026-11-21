@@ -387,7 +387,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
       </div>
       <div class="scheda s12 entra">
         <h2>Le sue previsioni di fine 2024, verificate</h2>
-        <p class="sotto">Dall'intervista in italiano a Giovanni Santostasi di fine 2024 (BTC intorno ai 90-100.000 $). Esiti con i prezzi Bitstamp.</p>
+        <p class="sotto">Dalle due live in italiano con Giovanni Santostasi di novembre 2024 (BTC intorno ai 90-100.000 $). Esiti con i prezzi Bitstamp.</p>
         <div class="tabella-wrap" style="margin-top:10px"><table id="t-previsioni"></table></div>
       </div>
       <div class="scheda s12 entra testo">
@@ -790,7 +790,8 @@ function tesseraPotenza(){
 function potenza(){
   const P = D.potenza, oggiG = giorniDa(D.ultimo_giorno), m = P.multiplo_oggi, sotto = m < P.supporto;
   contaNumero($("#p-mult"), m, v => numIt(v, 2) + "×");
-  $("#p-mult-t").innerHTML = `Il prezzo è il <b>${numIt(m*100)}%</b> del valore di tendenza (${dataIt(D.ultimo_giorno)}).`;
+  const anni = giorniDa(D.ultimo_giorno)/365.25, crescita = a => (Math.pow((a+1)/a, P.n) - 1)*100;
+  $("#p-mult-t").innerHTML = `Il prezzo è il <b>${numIt(m*100)}%</b> del valore di tendenza (${dataIt(D.ultimo_giorno)}). La tendenza oggi cresce del <b>${numIt(crescita(anni))}% all'anno</b>, tra 10 anni del ${numIt(crescita(anni+10))}% (rallenta con l'età di Bitcoin).`;
   $("#p-tend").textContent = dollari(P.tendenza_oggi); $("#p-supp").textContent = dollari(P.tendenza_oggi*P.supporto);
   const st = $("#p-stato"); st.textContent = sotto ? "Sotto il supporto" : m < 1 ? "Tra supporto e tendenza" : "Sopra la tendenza"; st.className = "chip " + (sotto ? "giu" : m < 1 ? "blu" : "oro");
   document.querySelector("#p-potenza .quad").style.setProperty("--alone", sotto ? "rgba(255,106,92,.45)" : "rgba(92,200,255,.35)");
@@ -824,13 +825,15 @@ function potenza(){
   $("#t-stab-inizio").innerHTML = `<tr><th>Dati dal</th><th>Esponente</th><th>Tendenza oggi</th></tr>` + P.stabilita_inizio.map(x=>`<tr><td>${dataIt(x.da)}</td><td>${numIt(x.esponente,2)}</td><td>${dollari(x.tendenza_oggi)}</td></tr>`).join("") + `<tr><td class="tenue">Santostasi</td><td>${numIt(P.n,2)}</td><td>${dollari(P.tendenza_oggi)}</td></tr>`;
   $("#t-stab-fine").innerHTML = `<tr><th>Dati fino al</th><th>Esponente</th><th>Tendenza prevista oggi</th></tr>` + fi.map(x=>`<tr><td>${dataIt(x.fino_a)}</td><td>${numIt(x.esponente,2)}</td><td>${dollari(x.tendenza_oggi)}</td></tr>`).join("") + `<tr><td class="tenue">Prezzo vero</td><td></td><td>${dollari(D.oggi.prezzo)}</td></tr>`;
   // previsioni dell'intervista di fine 2024
-  const ESITI = {giusto:["su","Giusto"], parte:["oro","In parte"], no:["giu","Sbagliato"], finora:["giu","Finora sbagliato"], aperto:["neutro","Ancora aperto"]};
+  const ESITI = {giusto:["su","Giusto"], giustof:["su","Giusto finora"], parte:["oro","In parte"], no:["giu","Sbagliato"], finora:["giu","Finora sbagliato"], aperto:["neutro","Ancora aperto"]};
   const sottoOra = D.oggi.prezzo < P.tendenza_oggi*P.supporto;
   const PREV = [
     ["Il rialzo parte a novembre 2024", "Da novembre 2024 Bitcoin è salito fino al massimo di ottobre 2025.", "giusto"],
     ["Massimo intorno a novembre 2025", "Massimo il 6 ottobre 2025 (chiusura 124.728 $): circa un mese prima.", "giusto"],
     ["Massimo intorno a 200.000 $ (tra 180.000 e 250.000; in una slide «circa 270.000»)", "Il massimo è stato 124.728 $, sotto tutto l'intervallo.", "no"],
     ["Poi un anno di discesa del 70-80%", `Dal massimo il calo finora è del ${numIt((1 - Math.min(D.oggi.prezzo, 58526.17)/124728)*100)}%: il ribasso non è ancora finito.`, "aperto"],
+    ["Sotto i 40.000 $ (il supporto di novembre 2024) non si scende più", `Il punto più basso dopo è stato ${dollari(Math.min(D.oggi.prezzo, 57668.4))} (minimo del giorno, Bitstamp).`, "giustof"],
+    ["Solo la rottura del supporto smentirebbe la teoria, e non dovrebbe succedere", `Oggi il prezzo è ${numIt(P.multiplo_oggi,2)} volte la tendenza: ${sottoOra ? "sotto" : "sopra"} il supporto, che è a 0,42.`, sottoOra ? "finora" : "aperto"],
     ["Fondo intorno a 70.000 $, sul supporto della legge di potenza «non valicabile» (salvo di poco)", `Il prezzo è sceso a ${dollari(D.oggi.prezzo)}, ${sottoOra ? "sotto" : "sopra"} il supporto (${dollari(P.tendenza_oggi*P.supporto)}).`, sottoOra ? "finora" : "aperto"],
     ["1 milione di dollari in circa 10 anni (verso il 2034)", "Troppo presto per dirlo: la formula dà circa 1,1 milioni a inizio 2034.", "aperto"]];
   $("#t-previsioni").innerHTML = `<tr><th>Cosa ha detto</th><th>Com'è andata (al ${dataIt(D.ultimo_giorno)})</th><th>Esito</th></tr>` +
