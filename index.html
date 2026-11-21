@@ -12,7 +12,7 @@
 <link rel="icon" href="assets/icona.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
 :root{
   --bg:#000000; --card:#0B0D12; --card2:#11141B; --riga:#1A1E27; --riga-f:#262B36;
@@ -37,11 +37,20 @@ html[data-tema="chiaro"]{
 *{box-sizing:border-box}
 html,body{margin:0}
 body{background:var(--bg); color:var(--ink); font:400 15px/1.55 var(--f-s); -webkit-font-smoothing:antialiased; min-height:100vh; overflow-x:hidden}
-/* luce "marea": una fascia azzurra sfocata che sale piano dal basso (segno di CycleDial) */
-body::before{content:""; position:fixed; z-index:0; pointer-events:none; left:-20vw; right:-20vw; bottom:-38vh; height:70vh; border-radius:50%;
-  background:radial-gradient(closest-side, rgba(92,200,255,.20), rgba(92,200,255,.06) 55%, transparent); filter:blur(30px); animation:marea 14s var(--ease) infinite alternate}
-html[data-tema="chiaro"] body::before{background:radial-gradient(closest-side, rgba(10,126,198,.18), rgba(10,126,198,.05) 55%, transparent)}
-@keyframes marea{from{transform:translateY(4vh) scaleX(1)}to{transform:translateY(-3vh) scaleX(1.08)}}
+/* ===== Stile 2026-11 delle app Ellecci (come BandPilot, AltSonar, VaultWatch): una luce del colore principale che "respira" dietro la scheda
+   più importante, un secondo filo di luce in basso, la scheda principale in vetro colorato, le altre schede scure smerigliate con un filo
+   di colore sul bordo alto. CycleDial = "quadrante a marea": luce azzurra dietro il quadrante del rischio + riflesso viola in basso. ===== */
+body::before{content:""; position:fixed; z-index:0; pointer-events:none; left:50%; top:2vh; width:min(140vw, 900px); aspect-ratio:1; translate:-50% 0; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(92,200,255,.40), rgba(92,200,255,.11) 55%, transparent),
+    conic-gradient(from 200deg, transparent 0 10%, rgba(140,220,255,.10) 18%, transparent 30% 70%, rgba(140,220,255,.08) 82%, transparent 90%);
+  filter:blur(50px); animation:cdRespiro 9s ease-in-out infinite alternate}
+body::after{content:""; position:fixed; z-index:0; pointer-events:none; right:-20vw; bottom:-25vh; width:80vw; height:60vh; border-radius:50%;
+  background:radial-gradient(closest-side, rgba(183,155,235,.16), transparent); filter:blur(40px)}
+@keyframes cdRespiro{from{opacity:.75; scale:.94} to{opacity:1; scale:1.04}}
+@media (min-width:1100px){ body::before{left:22%; top:8vh; width:760px} }
+html[data-tema="chiaro"] body::before{background:radial-gradient(closest-side, rgba(10,126,198,.46), rgba(10,126,198,.16) 55%, transparent),
+    conic-gradient(from 200deg, transparent 0 10%, rgba(10,126,198,.18) 18%, transparent 30% 70%, rgba(10,126,198,.14) 82%, transparent 90%)}
+html[data-tema="chiaro"] body::after{background:radial-gradient(closest-side, rgba(110,79,192,.24), transparent)}
 ::selection{background:rgba(92,200,255,.28)}
 a{color:var(--acc)}
 button{font:inherit; color:inherit}
@@ -87,11 +96,16 @@ section.pagina.attiva{display:block}
 @media (max-width:980px){ .s3{grid-column:span 6} .s8,.s7,.s5,.s4{grid-column:span 12} }
 @media (max-width:560px){ .s3,.s6{grid-column:span 12} }
 
-.scheda{position:relative; background:var(--card); border:1px solid var(--riga); border-radius:24px; padding:18px; min-width:0; overflow:hidden}
-html[data-tema="chiaro"] .scheda{border-color:var(--riga); box-shadow:var(--ombra)}
+.scheda{position:relative; background:rgba(255,255,255,.03); border:1px solid rgba(255,255,255,.085); border-top-color:rgba(92,200,255,.24);
+  border-radius:24px; padding:18px; min-width:0; overflow:hidden; -webkit-backdrop-filter:blur(22px) saturate(150%); backdrop-filter:blur(22px) saturate(150%)}
+html[data-tema="chiaro"] .scheda{background:rgba(255,255,255,.62); border-color:rgba(15,23,42,.07); border-top-color:rgba(10,126,198,.32); box-shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.05)}
 .scheda.piccola{border-radius:16px; padding:14px}
-.scheda.vetro{background:var(--vetro); border-color:var(--vetro-b); backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px)}
-.scheda.vetro::after{content:""; position:absolute; inset:0 0 auto; height:1px; background:linear-gradient(90deg, transparent, rgba(255,255,255,.18), transparent)}
+/* scheda principale in vetro colorato azzurro */
+.scheda.vetro{border-radius:28px; background:linear-gradient(165deg, rgba(120,210,255,.19), rgba(255,255,255,.04) 50%, rgba(92,200,255,.08));
+  border-color:rgba(255,255,255,.15); box-shadow:inset 0 1px 0 rgba(170,225,255,.18), 0 18px 44px rgba(0,0,0,.55)}
+.scheda.vetro::after{content:""; position:absolute; inset:0 0 auto; height:1px; background:linear-gradient(90deg, transparent, rgba(190,235,255,.35), transparent)}
+html[data-tema="chiaro"] .scheda.vetro{background:linear-gradient(165deg, rgba(10,126,198,.26), rgba(255,255,255,.58) 50%, rgba(92,200,255,.18));
+  border-color:rgba(10,126,198,.40); box-shadow:inset 0 1px 0 rgba(255,255,255,.95), 0 18px 44px rgba(10,90,150,.20)}
 .scheda h2+.sotto{margin-top:4px}
 .riga-titolo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap}
 .link{color:var(--acc); font-weight:500; font-size:.8125rem; text-decoration:none; background:none; border:0; cursor:pointer; padding:0}
@@ -102,9 +116,9 @@ html[data-tema="chiaro"] .scheda{border-color:var(--riga); box-shadow:var(--ombr
 @media (max-width:860px){ .eroe{grid-template-columns:minmax(0,1fr)} }
 .eroe .quad{isolation:isolate}
 .eroe .quad::before{content:""; position:absolute; z-index:-1; left:-30px; bottom:-60px; width:240px; height:200px; border-radius:50%;
-  background:radial-gradient(closest-side, var(--alone, rgba(92,200,255,.35)), transparent); filter:blur(28px); opacity:.6}
+  background:radial-gradient(closest-side, var(--alone, rgba(92,200,255,.35)), transparent); filter:blur(28px); opacity:.75}
 .quadrante{display:block; width:100%; max-width:280px; margin:6px auto 0}
-.valore-eroe{font-family:var(--f-t); font-weight:600; font-size:clamp(2.5rem, 7vw, 3.3rem); line-height:1; letter-spacing:-.02em; text-align:center; margin-top:4px}
+.valore-eroe{font-family:var(--f-t); font-weight:400; font-size:clamp(2.5rem, 7vw, 3.3rem); line-height:1; letter-spacing:-.02em; text-align:center; margin-top:4px}
 .fascia{display:table; margin:10px auto 0; padding:4px 12px; border-radius:999px; font-weight:600; font-size:.8125rem}
 .prezzo-riga{display:flex; justify-content:space-between; align-items:baseline; gap:10px; border-top:1px solid var(--riga); margin-top:16px; padding-top:12px; flex-wrap:wrap}
 .prezzo-riga .num{font-size:1.25rem; font-weight:500}
@@ -174,7 +188,7 @@ html[data-tema="chiaro"] footer .studio img{filter:invert(1)}
   .entra{transform:none; filter:none}
   ::view-transition-new(root){animation:none}
 }
-@media (prefers-reduced-transparency: reduce){ .scheda.vetro, nav.menu.basso{backdrop-filter:none; background:var(--card2)} }
+@media (prefers-reduced-transparency: reduce){ .scheda, .scheda.vetro, nav.menu.basso{-webkit-backdrop-filter:none; backdrop-filter:none; background:var(--card)} }
 </style>
 </head>
 <body>
@@ -309,12 +323,14 @@ html[data-tema="chiaro"] footer .studio img{filter:invert(1)}
       <p class="sotto">Il fisico Giovanni Santostasi ha notato che, su scala logaritmica, il prezzo di Bitcoin cresce quasi in linea retta con i giorni passati dal primo blocco (3 gennaio 2009):
       <span class="num">prezzo = 1,0117 × 10⁻¹⁷ × giorni<sup>5,82</sup></span>. Il «supporto» è il 42% di quella tendenza.</p></div></div>
     <div class="griglia">
-      <div class="scheda vetro quad s4 entra" style="isolation:isolate">
+      <div class="scheda vetro quad s4 entra" style="isolation:isolate; display:flex; flex-direction:column">
         <div class="etic">Oggi rispetto alla tendenza</div>
         <div class="valore-eroe num" id="p-mult" style="text-align:left;margin-top:12px">–</div>
         <p class="sotto" id="p-mult-t"></p>
         <div class="prezzo-riga" style="margin-top:14px"><div><div class="etic">Tendenza</div><div class="num" id="p-tend">–</div></div><div style="text-align:right"><div class="etic">Supporto (42%)</div><div class="num" id="p-supp">–</div></div></div>
         <div style="margin-top:12px"><span class="chip" id="p-stato">–</span></div>
+        <div class="etic" style="margin-top:20px">Prezzo diviso tendenza, ultimi 2 anni</div>
+        <div class="contenitore-grafico" style="flex:1; min-height:170px; height:auto; margin-top:6px"><canvas id="m-pot2"></canvas></div>
       </div>
       <div class="scheda s8 entra">
         <div class="riga-titolo"><h2>Prezzo, tendenza e proiezione fino al 2035</h2><div class="segmenti" data-periodo="potenza"><button aria-pressed="true" data-da="tempo">Nel tempo</button><button aria-pressed="false" data-da="loglog">Log-log</button></div></div>
@@ -736,6 +752,14 @@ function potenza(){
   const st = $("#p-stato"); st.textContent = sotto ? "Sotto il supporto" : m < 1 ? "Tra supporto e tendenza" : "Sopra la tendenza"; st.className = "chip " + (sotto ? "giu" : m < 1 ? "blu" : "oro");
   document.querySelector("#p-potenza .quad").style.setProperty("--alone", sotto ? "rgba(255,106,92,.45)" : "rgba(92,200,255,.35)");
   graficoPotenza();
+  { const da = Math.max(0, P.t.length - 105), T2 = P.t.slice(da), m2 = T2.map((t,i)=>P.c[da+i]/tendenza(giorniDa(t)));
+    distruggi("m-pot2");
+    const o2 = baseOpzioni({tick:v=>numIt(v,1)}); o2.scales.y.min = 0.3; o2.scales.y.ticks.maxTicksLimit = 5;
+    o2.plugins.tooltip.callbacks = {title:it=>dataIt(it[0].label), label:it=> it.datasetIndex===0 ? ` Prezzo/tendenza: ${numIt(it.raw,2)}` : null};
+    o2.plugins.puntoUltimo = {indice:0, colore: sotto ? css("--giu") : css("--acc")};
+    grafici["m-pot2"] = new Chart($("#m-pot2"), {type:"line", data:{labels:T2, datasets:[
+      linea(m2, css("--ink"), {fill:"start", backgroundColor:c=>area(c, sotto ? "#FF6A5C" : "#5CC8FF")}),
+      linea(T2.map(()=>P.supporto), css("--su"), {borderWidth:1.2, borderDash:[5,5], pointHoverRadius:0})]}, options:o2}); }
   // multiplo nel tempo
   const T = P.t, mult = T.map((t,i)=>P.c[i]/tendenza(giorniDa(t)));
   distruggi("g-mult");
