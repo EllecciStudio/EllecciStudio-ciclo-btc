@@ -20,7 +20,7 @@ Luigi non è uno sviluppatore: spiegagli tutto in italiano semplice. Non invia o
 - Stile: kit Ellecci (`DESIGN.md` degli altri progetti, skill `ellecci-design-system`), due temi come le altre app: `vetro` scuro predefinito
   e `chiaro`; scelta in `localStorage` `cd_tema`. Dal 21/11/2026 stile delle ultime app («quadrante a marea»): luce azzurra che respira dietro il quadrante
   (`body::before`, animazione `cdRespiro`) + riflesso viola in basso (`body::after`), scheda principale `.scheda.vetro` in vetro colorato azzurro, le altre schede
-  smerigliate con un filo azzurro sul bordo alto, numeri eroe Unbounded 400. Movimento «da dashboard», niente doppio asse nei grafici.
+  smerigliate con un filo azzurro sul bordo alto, numeri eroe Unbounded 600 (spessi, regola di DESIGN.md). Sul computer l'app riempie la finestra (niente colonna stretta; sopra 1600 px i blocchi si allargano); sul telefono la tabella delle previsioni diventa a schede. Movimento «da dashboard», niente doppio asse nei grafici.
 - Online: https://elleccistudio.github.io/EllecciStudio-ciclo-btc/ (GitHub Pages dal ramo `main`, attivato da Luigi il 21/11/2026).
 
 - **Cicli** (21/11/2026, dal video 119 e dai grafici di Bitbo): cicli sovrapposti per giorni dall'halving (prezzo ÷ minimo dei 2 anni prima dell'halving; halving 2028

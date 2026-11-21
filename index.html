@@ -57,7 +57,7 @@ button{font:inherit; color:inherit}
 .num{font-family:var(--f-m); font-variant-numeric:tabular-nums}
 .su{color:var(--su)} .giu{color:var(--giu)} .tenue{color:var(--ink2)}
 
-.app{position:relative; z-index:1; max-width:1180px; margin:0 auto;
+.app{position:relative; z-index:1; margin:0 auto;
   padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:16px 120px}
 header.testa{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0 20px}
 .marchio{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink)}
@@ -118,7 +118,7 @@ html[data-tema="chiaro"] .scheda.vetro{background:linear-gradient(165deg, rgba(1
 .eroe .quad::before{content:""; position:absolute; z-index:-1; left:-30px; bottom:-60px; width:240px; height:200px; border-radius:50%;
   background:radial-gradient(closest-side, var(--alone, rgba(92,200,255,.35)), transparent); filter:blur(28px); opacity:.75}
 .quadrante{display:block; width:100%; max-width:280px; margin:6px auto 0}
-.valore-eroe{font-family:var(--f-t); font-weight:400; font-size:clamp(2.5rem, 7vw, 3.3rem); line-height:1; letter-spacing:-.02em; text-align:center; margin-top:4px}
+.valore-eroe{font-family:var(--f-t); font-weight:600; font-size:clamp(2.5rem, 7vw, 3.3rem); line-height:1; letter-spacing:-.02em; text-align:center; margin-top:4px}
 .fascia{display:table; margin:10px auto 0; padding:4px 12px; border-radius:999px; font-weight:600; font-size:.8125rem}
 .prezzo-riga{display:flex; justify-content:space-between; align-items:baseline; gap:10px; border-top:1px solid var(--riga); margin-top:16px; padding-top:12px; flex-wrap:wrap}
 .prezzo-riga .num{font-size:1.25rem; font-weight:500}
@@ -127,7 +127,7 @@ html[data-tema="chiaro"] .scheda.vetro{background:linear-gradient(165deg, rgba(1
 .chip.blu{background:var(--acc-t); color:var(--acc)} .chip.neutro{background:var(--card2); color:var(--ink2)}
 
 .contenitore-grafico{position:relative; width:100%; height:260px}
-.contenitore-grafico.alto{height:min(62vh, 460px)}
+.contenitore-grafico.alto{height:clamp(300px, 58vh, 620px)}
 .contenitore-grafico.medio{height:320px}
 .contenitore-grafico.mini{height:92px; margin-top:10px}
 .legenda{display:flex; flex-wrap:wrap; gap:6px 14px; margin-top:10px; font-size:.75rem; color:var(--ink2)}
@@ -182,6 +182,18 @@ table.mesi td:first-child, table.mesi th:first-child{text-align:left; font-famil
 table.mesi td.v{border-radius:6px; border:2px solid var(--card); color:var(--ink)}
 table.mesi tr.sopra td{border-bottom:1px solid var(--riga-f); font-weight:600}
 nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
+/* computer: l'app riempie la finestra (regola del 17/11/2026), i blocchi si affiancano sugli schermi larghi */
+@media (min-width:1100px){ .app{padding-left:max(32px, env(safe-area-inset-left, 0px)); padding-right:max(32px, env(safe-area-inset-right, 0px))} }
+@media (min-width:1600px){
+  .eroe{grid-template-columns:minmax(0,1fr) minmax(0,2.2fr)}
+  .contenitore-grafico{height:300px} .contenitore-grafico.medio{height:380px} .contenitore-grafico.mini{height:110px}
+}
+/* telefono: le tabelle con testo lungo diventano schede */
+@media (max-width:640px){
+  table.schede tr:first-child{display:none}
+  table.schede tr{display:grid; grid-template-columns:1fr; gap:4px; padding:10px 0; border-bottom:1px solid var(--riga)}
+  table.schede td{border:0; padding:0; text-align:left !important; min-width:0 !important; white-space:normal}
+}
 /* movimento "da dashboard" */
 .entra{opacity:0; transform:translateY(8px); filter:blur(4px)}
 .entra.dentro{opacity:1; transform:none; filter:none; transition:opacity .45s var(--ease), transform .55s var(--ease), filter .45s var(--ease)}
@@ -243,11 +255,11 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
         <div class="riga-titolo"><h2>Questa settimana</h2><span class="tenue" style="font-size:.75rem">Dati USA · ora italiana</span></div>
         <div class="calendario" id="calendario"></div>
       </div>
-      <div class="scheda s5 solleva entra" data-vai="potenza">
+      <div class="scheda s5 solleva entra" data-vai="potenza" style="display:flex; flex-direction:column">
         <div class="riga-titolo"><span class="etic">Legge di potenza</span><a class="link" href="#potenza">Proiezione ›</a></div>
         <div class="stato num" id="t-pot" style="font-family:var(--f-t);font-weight:600;font-size:1.6rem">–</div>
         <div class="det tenue" id="t-pot-d" style="font-size:.8125rem;margin-top:4px"></div>
-        <div class="contenitore-grafico mini" style="height:110px"><canvas id="m-pot"></canvas></div>
+        <div class="contenitore-grafico mini" style="height:auto; flex:1; min-height:120px"><canvas id="m-pot"></canvas></div>
       </div>
     </div>
   </section>
@@ -388,7 +400,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
       <div class="scheda s12 entra">
         <h2>Le sue previsioni di fine 2024, verificate</h2>
         <p class="sotto">Dalle due live in italiano con Giovanni Santostasi di novembre 2024 (BTC intorno ai 90-100.000 $). Esiti con i prezzi Bitstamp.</p>
-        <div class="tabella-wrap" style="margin-top:10px"><table id="t-previsioni"></table></div>
+        <div class="tabella-wrap" style="margin-top:10px"><table id="t-previsioni" class="schede"></table></div>
       </div>
       <div class="scheda s12 entra testo">
         <h2>Quanto è affidabile</h2>
