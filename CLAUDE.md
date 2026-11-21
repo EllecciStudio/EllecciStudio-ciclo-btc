@@ -23,8 +23,12 @@ Luigi non è uno sviluppatore: spiegagli tutto in italiano semplice. Non invia o
   smerigliate con un filo azzurro sul bordo alto, numeri eroe Unbounded 400. Movimento «da dashboard», niente doppio asse nei grafici.
 - Online: https://elleccistudio.github.io/EllecciStudio-ciclo-btc/ (GitHub Pages dal ramo `main`, attivato da Luigi il 21/11/2026).
 
+- **Cicli** (21/11/2026, dal video 119 e dai grafici di Bitbo): cicli sovrapposti per giorni dall'halving (prezzo ÷ minimo dei 2 anni prima dell'halving; halving 2028
+  stimato al 17/04/2028 in `HALVING`), ripetizione del ciclo di 4 anni fa (1.458 giorni, moltiplicato per partire da oggi; prova: stesso segno dell'anno dopo 82%
+  contro 52% della controprova), rendimenti mensili, settimane rosse di fila (solo settimane chiuse). Calcoli in `cicli()` di `dati.py`.
+
 ## Dove sono le cose
-- `index.html`: tutta l'app (HTML, CSS, JS), grafici con `lib/chart.umd.js` (Chart.js 4.4.1 locale). Pagine con l'hash: `#oggi`, `#rischio`, `#medie`, `#interesse`, `#potenza`.
+- `index.html`: tutta l'app (HTML, CSS, JS), grafici con `lib/chart.umd.js` (Chart.js 4.4.1 locale). Pagine con l'hash: `#oggi`, `#rischio`, `#medie`, `#interesse`, `#cicli`, `#potenza`.
 - `calcoli.py`: chiusure settimanali (domenica UTC), medie, indice di rischio (percentile solo sul passato).
 - `dati.py`: scarica Bitstamp (aggiorna `dati/bitstamp_btcusd_1d.csv`, solo giorni chiusi), alternative.me (paura e avidità), calendario della settimana
   (nfs.faireconomy.media, solo USA importanza alta/media, titoli tradotti in `TRADUZIONI`) e scrive `dati/ciclo.json`. Se una fonte non risponde tiene il dato di prima.

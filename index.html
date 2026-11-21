@@ -177,6 +177,11 @@ html[data-tema="chiaro"] footer .studio img{filter:invert(1)}
   background:rgba(20,22,28,.9); color:#E9ECF1; border:1px solid rgba(255,255,255,.1); border-radius:999px; padding:9px 16px; font-size:.8125rem; transition:opacity .2s, transform .25s var(--ease)}
 .avviso.su-schermo{opacity:1; transform:translate(-50%, 0)}
 
+table.mesi th, table.mesi td{padding:6px 7px; font-size:.75rem; text-align:center}
+table.mesi td:first-child, table.mesi th:first-child{text-align:left; font-family:var(--f-m)}
+table.mesi td.v{border-radius:6px; border:2px solid var(--card); color:var(--ink)}
+table.mesi tr.sopra td{border-bottom:1px solid var(--riga-f); font-weight:600}
+nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
 /* movimento "da dashboard" */
 .entra{opacity:0; transform:translateY(8px); filter:blur(4px)}
 .entra.dentro{opacity:1; transform:none; filter:none; transition:opacity .45s var(--ease), transform .55s var(--ease), filter .45s var(--ease)}
@@ -317,6 +322,38 @@ html[data-tema="chiaro"] footer .studio img{filter:invert(1)}
     </div>
   </section>
 
+  <!-- CICLI -->
+  <section class="pagina" id="p-cicli" data-pagina="cicli">
+    <div class="intesta"><div><div class="etic">Ciclo di 4 anni</div><h1>I cicli di Bitcoin a confronto</h1>
+      <p class="sotto">Ogni ciclo gira intorno all'halving (ogni circa 4 anni si dimezzano i nuovi bitcoin). Qui si guardano i cicli passati uno sopra l'altro, il percorso di 4 anni fa ripetuto da oggi e i rendimenti di ogni mese.</p></div></div>
+    <div class="griglia">
+      <div class="scheda vetro quad s4 entra" style="isolation:isolate">
+        <div class="etic">Prossimo halving (stima)</div>
+        <div class="valore-eroe num" id="c-giorni" style="text-align:left;margin-top:12px">–</div>
+        <p class="sotto" id="c-giorni-t"></p>
+        <div class="prezzo-riga"><div><div class="etic">Settimane rosse di fila</div><div class="num" id="c-rosse">–</div></div><div style="text-align:right"><div class="etic">Record</div><div class="num" id="c-rosse-max">–</div></div></div>
+        <p class="sotto" id="c-rosse-t" style="font-size:.8125rem"></p>
+      </div>
+      <div class="scheda s8 entra">
+        <h2>Prezzo diviso il minimo del ciclo, per giorni dall'halving</h2>
+        <p class="sotto">Il minimo di ogni ciclo è il prezzo più basso nei 2 anni prima del suo halving. La fascia azzurra è dove sono arrivati i minimi passati.</p>
+        <div class="contenitore-grafico alto"><canvas id="g-ere"></canvas></div>
+        <div class="legenda" id="leg-ere"></div>
+      </div>
+      <div class="scheda s12 entra">
+        <div class="riga-titolo"><div><h2>Se ripetesse il ciclo di 4 anni fa</h2><p class="sotto">Il percorso di Bitcoin di 1.458 giorni fa, moltiplicato per partire dal prezzo di oggi. Non è una previsione: è «come se».</p></div></div>
+        <div class="contenitore-grafico alto"><canvas id="g-ripeti"></canvas></div>
+        <div class="legenda"><span><i class="linea" style="background:var(--ink)"></i>BTC</span><span><i class="linea" style="background:var(--acc)"></i>Ciclo di 4 anni fa ripetuto (tratteggio)</span><span><i class="linea" style="background:var(--oro)"></i>Media 200 giorni</span><span><i class="linea" style="background:var(--viola)"></i>Media 4 anni (1.458 giorni)</span></div>
+        <div class="verdetto" id="c-prova" style="margin-top:12px"></div>
+      </div>
+      <div class="scheda s12 entra">
+        <h2>Rendimento di ogni mese</h2>
+        <p class="sotto">Dalla chiusura del mese prima alla chiusura del mese (Bitstamp). In alto la media e quante volte il mese è stato positivo; l'ultimo mese è ancora in corso.</p>
+        <div class="tabella-wrap" style="margin-top:10px"><table id="t-mesi" class="mesi"></table></div>
+      </div>
+    </div>
+  </section>
+
   <!-- POTENZA -->
   <section class="pagina" id="p-potenza" data-pagina="potenza">
     <div class="intesta"><div><div class="etic">Legge di potenza · teoria di Giovanni Santostasi</div><h1>Dove dovrebbe stare Bitcoin secondo la legge di potenza</h1>
@@ -394,6 +431,7 @@ const PAGINE = [
   {id:"rischio", nome:"Rischio", icona:'<circle cx="6" cy="16" r="1.6"/><circle cx="11" cy="11" r="1.6"/><circle cx="15" cy="13" r="1.6"/><circle cx="19" cy="6" r="1.6"/>'},
   {id:"medie", nome:"Medie", icona:'<path d="M3 17c4-1 6-8 10-8s5 5 8 4"/><path d="M3 20c5 0 9-4 18-6"/>'},
   {id:"interesse", nome:"Interesse", icona:'<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/>'},
+  {id:"cicli", nome:"Cicli", icona:'<path d="M3 12c2.5-6 6.5-6 9 0s6.5 6 9 0"/><path d="M3 18h18"/>'},
   {id:"potenza", nome:"Potenza", icona:'<path d="M4 20 C9 19 14 14 20 4"/><path d="M4 20h16M4 20V4"/>'}
 ];
 const RIDUCI = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -807,9 +845,61 @@ function graficoPotenza(){
     L(linee(1,true), css("--acc"), {borderDash:[6,5]}), L(linee(P.supporto,true), css("--su"), {borderDash:[6,5]}), L(linee(2.5,true), css("--oro"), {borderDash:[6,5], borderWidth:1.5})]}, options:o});
 }
 
+/* ============================================================ CICLI */
+const COL_ERE = ["#8A93A1", "#B79BEB", "#E8B04B", null];
+function cicli(){
+  const C = D.cicli, ere = C.ere, ora = ere[ere.length-1];
+  contaNumero($("#c-giorni"), C.giorni_all_halving, v => numIt(v) + " gg");
+  $("#c-giorni-t").innerHTML = `All'halving di aprile 2028 (data stimata). I minimi dei cicli passati sono arrivati ${ere.filter(e=>!e.in_corso).map(e=>`<b>${numIt(-e.giorni_minimo)}</b>`).join(", ")} giorni prima dell'halving; oggi siamo a <b>${numIt(C.giorni_all_halving)}</b>.`;
+  const R = C.rosse;
+  $("#c-rosse").textContent = R.oggi; $("#c-rosse").className = "num " + (R.oggi>=4 ? "giu" : "");
+  $("#c-rosse-max").textContent = `${R.massimo} (${MESI[+R.data_massimo.slice(5,7)-1]} ${R.data_massimo.slice(0,4)})`;
+  $("#c-rosse-t").textContent = "Serie di almeno 5 settimane rosse dal 2011: " + R.lunghe.map(x=>`${x.settimane} fino al ${dataIt(x.fine)}`).join(" · ") + ".";
+  // ere sovrapposte
+  distruggi("g-ere");
+  const o = baseOpzioni({log:true, tick:v=>[0.5,1,2,3,5,10,20,50].includes(+v.toFixed(2)) ? numIt(v, v<1?1:0)+"×" : ""}); o.scales.y.ticks.autoSkip=false; o.scales.y.ticks.maxTicksLimit=12;
+  o.scales.x = {type:"linear", min:-1000, max:500, grid:{display:false}, border:{display:false}, ticks:{maxRotation:0, font:{size:11}, stepSize:250, callback:v=> v===0 ? "halving" : numIt(v)}};
+  o.interaction = {mode:"nearest", axis:"x", intersect:false};
+  o.plugins.tooltip.callbacks = {title:it=> `${numIt(it[0].raw.x)} giorni dall'halving`, label:it=>` ${ere[it.datasetIndex].nome}: ${numIt(it.raw.y,2)}× il minimo`};
+  o.plugins.puntoUltimo = {indice:ere.length-1, colore:css("--acc")};
+  const fascia = {id:"fasciaMinimi", beforeDatasetsDraw(ch){ const x=ch.scales.x, a=ch.chartArea, c=ch.ctx; c.save(); c.fillStyle = css("--acc")+"1A";
+    const da = Math.min(...ere.filter(e=>!e.in_corso).map(e=>e.giorni_minimo)) - 15, fino = Math.max(...ere.filter(e=>!e.in_corso).map(e=>e.giorni_minimo)) + 15;
+    c.fillRect(x.getPixelForValue(da), a.top, x.getPixelForValue(fino)-x.getPixelForValue(da), a.bottom-a.top); c.restore(); }};
+  grafici["g-ere"] = new Chart($("#g-ere"), {type:"line", data:{datasets: ere.map((e,i)=>({data:e.x.map((x,j)=>({x, y:e.y[j]})), borderColor: COL_ERE[i] || css("--acc"),
+    borderWidth: e.in_corso ? 2.6 : 1.6, pointRadius:0, pointHoverRadius:4, tension:0}))}, options:o, plugins:[fascia]});
+  $("#leg-ere").innerHTML = ere.map((e,i)=>`<span><i class="linea" style="background:${COL_ERE[i]||css("--acc")}"></i>${e.in_corso?"ciclo di oggi":e.nome} · minimo ${dollari(e.minimo)} (${dataIt(e.data_minimo)})</span>`).join("");
+  // ripetizione
+  const P = C.ripetizione, T = [...P.t, ...P.t_fut.slice(1)], n = P.t.length;
+  const vuoto = k => Array(k).fill(null);
+  distruggi("g-ripeti");
+  const or = baseOpzioni({log:true, tick:v=>{ const ok=[1e4,2e4,5e4,1e5,2e5,5e5]; return ok.includes(v) ? numIt(v/1e3)+"k" : ""; }}); or.scales.y.ticks.autoSkip=false; or.scales.y.ticks.maxTicksLimit=10;
+  or.plugins.tooltip.callbacks = {title:it=>dataIt(it[0].label), label:it=> it.raw==null ? null : ` ${["BTC","Ciclo ripetuto","Media 200 gg","Media 4 anni"][it.datasetIndex]}: ${dollari(it.raw)}`};
+  or.plugins.puntoUltimo = {indice:0, colore:css("--ink")};
+  grafici["g-ripeti"] = new Chart($("#g-ripeti"), {type:"line", data:{labels:T, datasets:[
+    linea([...P.c, ...vuoto(P.t_fut.length-1)], css("--ink")),
+    linea([...vuoto(n-1), ...P.c_fut], css("--acc"), {borderDash:[6,5]}),
+    linea([...P.ma200, ...vuoto(P.t_fut.length-1)], css("--oro"), {borderWidth:1.5}),
+    linea([...P.ma1458, ...vuoto(P.t_fut.length-1)], css("--viola"), {borderWidth:1.5})]}, options:or});
+  const pr = P.prova;
+  $("#c-prova").innerHTML = `<svg viewBox="0 0 24 24" stroke="var(--oro)"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/></svg>
+    <p>Ripetendo il ciclo di 4 anni fa: nuovo minimo intorno a <b>${dollari(P.minimo.prezzo)}</b> il ${dataIt(P.minimo.data)}, poi massimo di <b>${dollari(P.top.prezzo)}</b> il ${dataIt(P.top.data)}.
+    Sul passato (dal 2015, ${numIt(pr.giorni)} giorni di prova) l'anno «di 4 anni prima» ha indovinato se l'anno dopo sarebbe stato in salita o in discesa <b>${pr.stesso_segno_pct} volte su 100</b>,
+    contro ${pr.controprova_stesso_segno_pct} su 100 guardando solo l'anno appena passato (e ${pr.anni_in_salita_pct} su 100 dicendo sempre «salita»). Utile per la direzione, non per i prezzi: sono solo 3 cicli e le prove si sovrappongono.</p>`;
+  // mesi
+  const M = C.mesi, anni = Object.keys(M).sort().reverse(), NOMI = ["Gen","Feb","Mar","Apr","Mag","Giu","Lug","Ago","Set","Ott","Nov","Dic"];
+  const col = v => v==null ? "" : `background:${v>=0 ? "rgba(78,219,156," : "rgba(255,106,92,"}${Math.min(.75, Math.abs(v)/45 + .1).toFixed(2)})`;
+  const cella = (v, cls="v") => `<td class="${cls}" style="${col(v)}">${v==null ? "" : pct(v, 1)}</td>`;
+  const media = NOMI.map((_,k)=>{ const x = anni.map(a=>M[a][k]).filter(v=>v!=null); return x.length ? x.reduce((s,v)=>s+v,0)/x.length : null; });
+  const pos = NOMI.map((_,k)=>{ const x = anni.map(a=>M[a][k]).filter(v=>v!=null); return x.length ? Math.round(x.filter(v=>v>0).length/x.length*100) : null; });
+  $("#t-mesi").innerHTML = `<tr><th>Anno</th>${NOMI.map(m=>`<th>${m}</th>`).join("")}</tr>
+    <tr class="sopra"><td>Media</td>${media.map(v=>cella(v)).join("")}</tr>
+    <tr class="sopra"><td>Positivi</td>${pos.map(v=>`<td>${v==null?"":v+"%"}</td>`).join("")}</tr>` +
+    anni.map(a=>`<tr><td>${a}</td>${M[a].map(v=>cella(v)).join("")}</tr>`).join("");
+}
+
 /* ============================================================ navigazione, tema, movimento */
 const disegnate = new Set();
-const DISEGNA = {oggi, rischio, medie, interesse, potenza};
+const DISEGNA = {oggi, rischio, medie, interesse, potenza, cicli};
 function costruisciMenu(){
   document.querySelectorAll("nav.menu").forEach(n=>{ n.innerHTML = PAGINE.map(p=>`<a href="#${p.id}" data-p="${p.id}"><svg viewBox="0 0 24 24">${p.icona}</svg><span>${p.nome}</span></a>`).join(""); });
 }

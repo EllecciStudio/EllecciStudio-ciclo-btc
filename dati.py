@@ -183,6 +183,79 @@ def potenza(g: pd.DataFrame) -> dict:
     }
 
 
+HALVING = ["2012-11-28", "2016-07-09", "2020-05-11", "2024-04-20", "2028-04-17"]   # l'ultimo è una stima (circa aprile 2028)
+QUATTRO_ANNI = 1458
+
+
+def cicli(g: pd.DataFrame) -> dict:
+    """Cicli a confronto (prezzo diviso il minimo del ciclo, per giorni dall'halving), ripetizione del ciclo di 4 anni fa,
+    rendimenti mensili e settimane rosse di fila."""
+    d = g.copy()
+    d.index = pd.to_datetime(d["t"], unit="s")
+    c = d["c"]
+    ere = []
+    for h in HALVING:
+        H = pd.Timestamp(h)
+        x = c[(c.index >= H - pd.Timedelta(days=1000)) & (c.index <= H + pd.Timedelta(days=500))]
+        fondo = c[(c.index >= H - pd.Timedelta(days=730)) & (c.index <= H)]   # minimo del ciclo: nei 2 anni prima dell'halving
+        if x.empty or fondo.empty or (H - fondo.index[0]).days < 600:
+            continue
+        minimo, quando = float(fondo.min()), fondo.idxmin()
+        giorni = (x.index - H).days
+        passo = slice(None, None, 2)
+        ere.append({"nome": f"halving {h[:4]}", "halving": h, "minimo": round(minimo, 2), "data_minimo": str(quando.date()),
+                    "giorni_minimo": int((quando - H).days), "in_corso": h > str(c.index[-1].date()),
+                    "x": [int(v) for v in giorni[passo]], "y": [round(float(v), 3) for v in (x / minimo).to_numpy()[passo]]})
+    # ripetizione del ciclo: il percorso di 4 anni fa, moltiplicato per partire dal prezzo di oggi
+    oggi = c.index[-1]
+    base = c.iloc[-1 - QUATTRO_ANNI]
+    fut = c.iloc[-1 - QUATTRO_ANNI:-1 - QUATTRO_ANNI + 1096] / base * c.iloc[-1]
+    date_fut = [oggi + pd.Timedelta(days=k) for k in range(len(fut))]
+    passato = c[c.index >= oggi - pd.Timedelta(days=1095)]
+    ma200, ma1458 = c.rolling(200).mean(), c.rolling(QUATTRO_ANNI).mean()
+    i_top, i_bot = int(np.argmax(fut.to_numpy())), int(np.argmin(fut.to_numpy()))
+    prova = []
+    for i in range(QUATTRO_ANNI, len(c) - 365):
+        prova.append((np.log(c.iloc[i - QUATTRO_ANNI + 365] / c.iloc[i - QUATTRO_ANNI]), np.log(c.iloc[i + 365] / c.iloc[i])))
+    a = np.array(prova)
+    ctrl = np.array([(np.log(c.iloc[i] / c.iloc[i - 365]), np.log(c.iloc[i + 365] / c.iloc[i])) for i in range(365, len(c) - 365)])
+    ripetizione = {
+        "t": [str(x.date()) for x in passato.index[::2]], "c": [round(float(x), 2) for x in passato.to_numpy()[::2]],
+        "ma200": [round(float(x), 2) for x in ma200[passato.index].to_numpy()[::2]], "ma1458": [round(float(x), 2) for x in ma1458[passato.index].to_numpy()[::2]],
+        "t_fut": [str(x.date()) for x in date_fut[::2]], "c_fut": [round(float(x), 2) for x in fut.to_numpy()[::2]],
+        "top": {"data": str(date_fut[i_top].date()), "prezzo": round(float(fut.iloc[i_top]))},
+        "minimo": {"data": str(date_fut[i_bot].date()), "prezzo": round(float(fut.iloc[i_bot]))},
+        "prova": {"giorni": int(len(a)), "correlazione": round(float(np.corrcoef(a[:, 0], a[:, 1])[0, 1]), 2),
+                  "stesso_segno_pct": round(float(((a[:, 0] > 0) == (a[:, 1] > 0)).mean() * 100)),
+                  "controprova_stesso_segno_pct": round(float(((ctrl[:, 0] > 0) == (ctrl[:, 1] > 0)).mean() * 100)),
+                  "anni_in_salita_pct": round(float((ctrl[:, 1] > 0).mean() * 100))},
+    }
+    # rendimenti mensili (chiusura su chiusura)
+    m = c.resample("ME").last()
+    r = m.pct_change() * 100
+    mesi = {}
+    for quando, v in r.dropna().items():
+        mesi.setdefault(str(quando.year), [None] * 12)[quando.month - 1] = round(float(v), 2)
+    # settimane rosse di fila (solo settimane chiuse)
+    w = d.resample("W-SUN").agg({"o": "first", "c": "last"}).dropna()
+    w = w[w.index <= oggi.normalize()] if oggi.weekday() == 6 else w[w.index < oggi.normalize()]
+    serie, s = [], 0
+    for rosso in (w["c"] < w["o"]):
+        s = s + 1 if rosso else 0
+        serie.append(s)
+    w["serie"] = serie
+    lunghe = []
+    for quando, n in w["serie"].items():
+        if n >= 5 and (len(lunghe) == 0 or lunghe[-1]["fine"] != str((quando - pd.Timedelta(days=7)).date())):
+            lunghe.append({"fine": str(quando.date()), "settimane": int(n)})
+        elif n >= 5:
+            lunghe[-1].update({"fine": str(quando.date()), "settimane": int(n)})
+    return {"ere": ere, "ripetizione": ripetizione, "mesi": mesi,
+            "rosse": {"oggi": int(w["serie"].iloc[-1]), "ultima_settimana": str(w.index[-1].date()), "massimo": int(w["serie"].max()),
+                      "data_massimo": str(w["serie"].idxmax().date()), "lunghe": lunghe},
+            "halving_prossimo": HALVING[-1], "giorni_all_halving": int((pd.Timestamp(HALVING[-1]) - oggi).days)}
+
+
 def r(x, n=2):
     return None if x is None or (isinstance(x, float) and np.isnan(x)) else round(float(x), n)
 
@@ -229,6 +302,7 @@ def main():
         "bot": {"media_giorni": BOT_MEDIA, "banda": BOT_BANDA},
         "prova_rischio": prova,
         "potenza": potenza(g),
+        "cicli": cicli(g),
         "paura_avidita": paura_avidita(precedente.get("paura_avidita")),
         "calendario": calendario(precedente.get("calendario")),
     }
