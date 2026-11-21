@@ -30,6 +30,7 @@ Luigi non è uno sviluppatore: spiegagli tutto in italiano semplice. Non invia o
 
 ## Dove sono le cose
 - `index.html`: tutta l'app (HTML, CSS, JS), grafici con `lib/chart.umd.js` (Chart.js 4.4.1 locale). Pagine con l'hash: `#oggi`, `#rischio`, `#medie`, `#interesse`, `#cicli`, `#potenza`.
+- `manifest.webmanifest` + `assets/icona-180/192/512.png` (logo Ellecci Studio, come le altre app): nome «CycleDial · Ellecci Studio» quando la si installa sul computer o sul telefono.
 - `calcoli.py`: chiusure settimanali (domenica UTC), medie, indice di rischio (percentile solo sul passato).
 - `dati.py`: scarica Bitstamp (aggiorna `dati/bitstamp_btcusd_1d.csv`, solo giorni chiusi), alternative.me (paura e avidità), calendario della settimana
   (nfs.faireconomy.media, solo USA importanza alta/media, titoli tradotti in `TRADUZIONI`) e scrive `dati/ciclo.json`. Se una fonte non risponde tiene il dato di prima.
