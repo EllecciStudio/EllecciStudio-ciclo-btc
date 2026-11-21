@@ -143,7 +143,7 @@ def stato_bot(c: pd.Series):
 
 
 GENESI = pd.Timestamp("2009-01-03")
-PL_A, PL_N, PL_SUPPORTO = 1.0117e-17, 5.82, 0.42   # legge di potenza come pubblicata da G. Santostasi (bgeometrics, @Giovann35084111)
+PL_A, PL_N, PL_SUPPORTO = 1.0117e-17, 5.82, 0.42   # legge di potenza: coefficienti come pubblicati
 
 
 def potenza(g: pd.DataFrame) -> dict:
