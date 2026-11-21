@@ -64,6 +64,16 @@ button{font:inherit; color:inherit}
 .app{position:relative; z-index:1; margin:0 auto;
   padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); padding-block:16px 120px}
 header.testa{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:8px 0 20px}
+/* sul computer la barra delle sezioni resta sempre in alto mentre scorri (21/11/2026, richiesta di Luigi) */
+@media (min-width:761px){
+  html, body{overflow-x:clip}
+  header.testa{position:sticky; top:0; z-index:25; padding:12px 0; margin-bottom:12px}
+  header.testa::before{content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; width:100vw; transform:translateX(-50%);
+    background:rgba(0,0,0,.55); -webkit-backdrop-filter:blur(18px) saturate(150%); backdrop-filter:blur(18px) saturate(150%);
+    border-bottom:1px solid transparent; opacity:0; transition:opacity .25s var(--ease), border-color .25s}
+  header.testa.scorre::before{opacity:1; border-bottom-color:var(--riga)}
+  html[data-tema="chiaro"] header.testa::before{background:rgba(243,244,246,.72)}
+}
 .marchio{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink)}
 .marchio svg{height:28px; width:auto}
 .testa .destra{display:flex; align-items:center; gap:8px}
@@ -113,7 +123,7 @@ html[data-tema="chiaro"] .scheda.vetro{background:linear-gradient(165deg, rgba(1
 .scheda h2+.sotto{margin-top:4px}
 .riga-titolo{display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap}
 .link{color:var(--acc); font-weight:500; font-size:.8125rem; text-decoration:none; background:none; border:0; cursor:pointer; padding:0}
-@media (hover:hover){ .scheda.solleva{transition:transform .25s var(--ease), border-color .25s} .scheda.solleva:hover{transform:translateY(-4px); border-color:var(--riga-f)} }
+@media (hover:hover){ .scheda.dentro:hover{transform:translateY(-4px); transition:transform .25s var(--ease), border-color .25s} .scheda.solleva.dentro:hover{border-color:var(--riga-f)} }
 
 /* eroe: quadrante del rischio */
 .eroe{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.5fr); gap:12px; align-items:stretch}
@@ -198,6 +208,10 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
   table.schede tr{display:grid; grid-template-columns:1fr; gap:4px; padding:10px 0; border-bottom:1px solid var(--riga)}
   table.schede td{border:0; padding:0; text-align:left !important; min-width:0 !important; white-space:normal}
 }
+/* movimento "dal vivo": un dato che cambia mentre guardi fa un lampo verde o rosso */
+.lampo-su{animation:lampoSu 1.1s var(--ease)} .lampo-giu{animation:lampoGiu 1.1s var(--ease)}
+@keyframes lampoSu{0%{color:var(--su); text-shadow:0 0 14px var(--su)} 100%{}}
+@keyframes lampoGiu{0%{color:var(--giu); text-shadow:0 0 14px var(--giu)} 100%{}}
 /* movimento "da dashboard" */
 .entra{opacity:0; transform:translateY(8px); filter:blur(4px)}
 .entra.dentro{opacity:1; transform:none; filter:none; transition:opacity .45s var(--ease), transform .55s var(--ease), filter .45s var(--ease)}
@@ -943,12 +957,47 @@ function mostra(id, primaVolta){
   document.querySelectorAll("section.pagina").forEach(s=>s.classList.toggle("attiva", s.dataset.pagina===id));
   document.querySelectorAll("nav.menu a").forEach(a=>{ if(a.dataset.p===id) a.setAttribute("aria-current","page"); else a.removeAttribute("aria-current"); });
   if(!D) return;
-  if(!disegnate.has(id)){ DISEGNA[id](); disegnate.add(id); cascata(document.getElementById("p-"+id)); }
+  /* movimento "da dashboard" OGNI volta che si apre una sezione (regola di Luigi del 16/11/2026, come nelle altre app):
+     schede a cascata, numeri che contano da 0, grafici che si costruiscono quando arrivano sullo schermo */
   if(!primaVolta) window.scrollTo({top:0});
+  const pagina = document.getElementById("p-"+id);
+  pagina.querySelectorAll(".entra").forEach(x=>x.classList.remove("dentro"));
+  DISEGNA[id](); disegnate.add(id);
+  contaTutti(pagina);
+  graficiQuandoVisibili(pagina);
+  cascata(pagina);
 }
+let giroCascata = 0;
 function cascata(el){
-  const s = el.querySelectorAll(".entra");
-  s.forEach((x,i)=> setTimeout(()=>x.classList.add("dentro"), RIDUCI ? 0 : 60 + i*55));
+  const s = el.querySelectorAll(".entra"), giro = ++giroCascata;
+  void el.offsetWidth;
+  s.forEach((x,i)=> setTimeout(()=>{ if(giro===giroCascata) x.classList.add("dentro"); }, RIDUCI ? 0 : 60 + i*55));
+}
+/* numeri delle righe e delle tessere che contano da 0 (quelli grandi lo fanno già nelle loro funzioni) */
+function contaTutti(pagina){
+  if(RIDUCI) return;
+  pagina.querySelectorAll(".prezzo-riga .num, .tessera .stato.num").forEach(el=>{
+    const m = /^([+−-]?)(\d{1,3}(?:\.\d{3})*|\d+)(?:,(\d+))?(.*)$/.exec(el.textContent.trim());
+    if(!m) return;
+    const segno = m[1], dec = m[3] ? m[3].length : 0, coda = m[4];
+    const v = parseFloat(m[2].replace(/\./g,"") + (m[3] ? "."+m[3] : ""));
+    if(!isFinite(v) || v===0) return;
+    contaNumero(el, v, x => segno + numIt(x, dec) + coda);
+  });
+}
+/* i grafici sotto la parte visibile partono quando ci arrivi scorrendo */
+const osservaGrafici = ("IntersectionObserver" in window) ? new IntersectionObserver(voci=>{
+  voci.forEach(v=>{ if(!v.isIntersecting) return; osservaGrafici.unobserve(v.target); const ch = Chart.getChart(v.target); if(ch) ch.update(); });
+}, {threshold:.25}) : null;
+function graficiQuandoVisibili(pagina){
+  if(RIDUCI || !osservaGrafici) return;
+  pagina.querySelectorAll("canvas").forEach(c=>{
+    const ch = Chart.getChart(c); if(!ch) return;
+    const r = c.getBoundingClientRect();
+    if(r.top < window.innerHeight * .92) return;
+    ch.stop(); ch.reset(); ch.draw();
+    osservaGrafici.observe(c);
+  });
 }
 let ultimoTocco = null;
 document.addEventListener("click", e=>{ const a = e.target.closest("a[href^='#'], [data-vai]"); if(a){ ultimoTocco = {x:e.clientX, y:e.clientY}; if(a.dataset.vai){ location.hash = a.dataset.vai; } } });
@@ -960,13 +1009,22 @@ window.addEventListener("hashchange", ()=>{
   } else mostra(id);
   ultimoTocco = null;
 });
-$("#tema").addEventListener("click", ()=>{
-  const nuovo = document.documentElement.dataset.tema === "chiaro" ? "vetro" : "chiaro";
-  document.documentElement.dataset.tema = nuovo; memoria.scrivi("cd_tema", nuovo);
-  const id = location.hash.slice(1) || "oggi";
-  Object.keys(grafici).forEach(distruggi); disegnate.clear();
-  mostra(id);
-  document.querySelectorAll(".entra").forEach(x=>x.classList.add("dentro"));
+/* cambio tema come nelle altre app: cerchio che si allarga dal pulsante, colore della barra del telefono aggiornato */
+function coloreBarra(){ const m = document.querySelector('meta[name="theme-color"]'); if(m) m.content = document.documentElement.dataset.tema === "chiaro" ? "#F3F4F6" : "#000000"; }
+coloreBarra();
+$("#tema").addEventListener("click", e=>{
+  const cambia = () => {
+    const nuovo = document.documentElement.dataset.tema === "chiaro" ? "vetro" : "chiaro";
+    document.documentElement.dataset.tema = nuovo; memoria.scrivi("cd_tema", nuovo); coloreBarra();
+    const id = location.hash.slice(1) || "oggi";
+    Object.keys(grafici).forEach(distruggi);
+    mostra(id, true);
+  };
+  if(document.startViewTransition && !RIDUCI){
+    const r = e.currentTarget.getBoundingClientRect();
+    document.documentElement.style.setProperty("--cx", (r.left + r.width/2)+"px"); document.documentElement.style.setProperty("--cy", (r.top + r.height/2)+"px");
+    document.startViewTransition(cambia);
+  } else cambia();
 });
 document.querySelectorAll(".segmenti").forEach(seg=>seg.addEventListener("click", e=>{
   const b = e.target.closest("button"); if(!b) return;
@@ -976,6 +1034,10 @@ document.querySelectorAll(".segmenti").forEach(seg=>seg.addEventListener("click"
   if(seg.dataset.periodo==="potenza"){ vistaPot = b.dataset.da; graficoPotenza(); }
 }));
 
+const testa = document.querySelector("header.testa");
+const segnaScorre = () => testa.classList.toggle("scorre", window.scrollY > 8);
+window.addEventListener("scroll", segnaScorre, {passive:true}); segnaScorre();
+
 (async function avvio(){
   costruisciMenu();
   try{ D = await caricaDati(); }
@@ -984,7 +1046,14 @@ document.querySelectorAll(".segmenti").forEach(seg=>seg.addEventListener("click"
   $("#piede-dati").textContent = `Dati aggiornati il ${agg.toLocaleDateString("it-IT")} alle ${agg.toLocaleTimeString("it-IT",{hour:"2-digit",minute:"2-digit"})}`;
   mostra(location.hash.slice(1) || "oggi", true);
   PREZZO_VIVO = await prezzoVivo();
-  if(PREZZO_VIVO && disegnate.has("oggi")) mostraPrezzo();
+  if(PREZZO_VIVO && disegnate.has("oggi")){
+    const el = $("#o-prezzo"), da = D.oggi.prezzo, a = PREZZO_VIVO.p;
+    mostraPrezzo();
+    if(!RIDUCI && document.getElementById("p-oggi").classList.contains("attiva")){
+      conta(1, t => el.textContent = dollari(da + (a-da)*t), 900);
+      el.classList.remove("lampo-su","lampo-giu"); void el.offsetWidth; el.classList.add(a>=da ? "lampo-su" : "lampo-giu");
+    }
+  }
 })();
 </script>
 </body>
