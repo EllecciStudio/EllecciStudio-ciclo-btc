@@ -47,13 +47,14 @@ body::before{content:""; position:fixed; inset:0; z-index:1; pointer-events:none
 html[data-tema="chiaro"] body::before{opacity:.06; filter:invert(1)}
 /* «vetro sul colore» + «archi della C» (scelta di Luigi, 21/11/2026 sera): una fascia in cima in sfumatura di un solo colore (l'azzurro dell'app),
    archi fermi aperti a destra come la C del logo, e le schede che stanno sopra la fascia di vetro. Niente macchie di luce. */
-.banda{position:absolute; z-index:0; left:0; right:0; top:0; height:540px; overflow:hidden; pointer-events:none;
+.banda{position:absolute; z-index:0; left:0; right:0; top:0; height:560px; overflow:hidden; pointer-events:none;
   background:linear-gradient(162deg, #0E6FA3 0%, #0A4C73 42%, var(--bg) 100%)}
 html[data-tema="chiaro"] .banda{background:linear-gradient(162deg, #8DD0F5 0%, #C4E6F9 42%, var(--bg) 100%)}
-.banda svg{position:absolute; right:-180px; top:-120px; width:940px; height:940px; fill:none; stroke:#A8DFFF; stroke-linecap:round;
-  -webkit-mask-image:linear-gradient(180deg, #000 40%, transparent 66%); mask-image:linear-gradient(180deg, #000 40%, transparent 66%)}
+.banda svg{position:absolute; right:-120px; top:-110px; width:820px; height:820px; fill:none; stroke:#A8DFFF; stroke-linecap:butt;
+  -webkit-mask-image:linear-gradient(180deg, #000 75%, transparent 82%); mask-image:linear-gradient(180deg, #000 75%, transparent 82%)}
 html[data-tema="chiaro"] .banda svg{stroke:#0A7EC6}
-@media (max-width:760px){ .banda{height:430px} .banda svg{right:-230px; top:-130px; width:600px; height:600px; opacity:.8} }
+@media (max-width:760px){ .banda{height:430px} .banda svg{right:-160px; top:-130px; width:600px; height:600px; opacity:.8;
+  -webkit-mask-image:linear-gradient(180deg, #000 70%, transparent 88%); mask-image:linear-gradient(180deg, #000 70%, transparent 88%)} }
 .intesta .sotto, .intesta .etic{color:rgba(233,236,241,.84)}
 html[data-tema="chiaro"] .intesta .sotto, html[data-tema="chiaro"] .intesta .etic{color:#24384A}
 /* vetro solo dove dietro c'è la fascia: il primo blocco di schede di ogni pagina.
@@ -61,7 +62,7 @@ html[data-tema="chiaro"] .intesta .sotto, html[data-tema="chiaro"] .intesta .eti
 html:not([data-tema="chiaro"]) .pagina > .intesta + * > .scheda{--ink2:rgba(238,244,248,.82); --ink3:rgba(238,244,248,.62); --acc:#B4E5FF; --riga:rgba(255,255,255,.16); --card2:rgba(255,255,255,.08)}
 .pagina > .intesta + * > .scheda{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.16);
   -webkit-backdrop-filter:blur(8px) saturate(140%); backdrop-filter:blur(8px) saturate(140%)}
-html[data-tema="chiaro"] .pagina > .intesta + * > .scheda{background:rgba(255,255,255,.62); border-color:rgba(255,255,255,.9); box-shadow:0 1px 2px rgba(15,23,42,.06)}
+html[data-tema="chiaro"] .pagina > .intesta + * > .scheda{background:rgba(255,255,255,.36); border-color:rgba(255,255,255,.85); box-shadow:0 1px 2px rgba(15,23,42,.06)}
 @media (prefers-reduced-transparency: reduce){ .pagina > .intesta + * > .scheda{-webkit-backdrop-filter:none; backdrop-filter:none; background:var(--card)} }
 ::selection{background:rgba(92,200,255,.28)}
 a{color:var(--acc)}
