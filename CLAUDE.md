@@ -7,7 +7,10 @@ Luigi non è uno sviluppatore: spiegagli tutto in italiano semplice. Non invia o
 
 ## Regole
 - Repository **pubblico** (GitHub Pages gratis, minuti di Actions gratis): solo prezzi pubblici, niente dati personali, niente chiavi.
-  «La mia strategia» si salva solo nel browser (`localStorage` `cd_strategia`); le regole di partenza nel codice sono quelle del bot, senza importi.
+- La sezione «La mia strategia» è stata tolta il 21/11/2026 su richiesta di Luigi; al suo posto **Legge di potenza** (teoria di Giovanni Santostasi, citato per nome:
+  è una teoria pubblica): tendenza = 1,0117e-17 × giorni dal 03/01/2009^5,82, supporto = 0,42 × tendenza (valori come pubblicati, riportati da bgeometrics);
+  la linea «× 2,5» è dei siti che la usano, non sua. Le prove di stabilità (esponente con altre date d'inizio e con i soli dati fino a una data) le calcola `potenza()` in `dati.py`.
+  Al 15/11/2026 il prezzo è sotto il supporto (0,41 × tendenza, minimo di sempre 0,40 il 14/11): prima solo 2 giorni nel 2015 e 2 a giugno 2026.
 - Nell'app non si nomina la fonte del video (né «Tartaruga» né il suo autore): l'idea è sua, le regole e i calcoli sono nostri e dichiarati.
 - Nessuna formula segreta: ogni indicatore ha la regola scritta nella pagina. L'indice di rischio segue `dati/REGOLE_RISCHIO.md`
   (decise prima dei risultati, varianti A/B/C, nessuna informazione futura). **Non cambiare le regole dopo aver visto i risultati**: una versione nuova
@@ -18,7 +21,7 @@ Luigi non è uno sviluppatore: spiegagli tutto in italiano semplice. Non invia o
   (luce «marea» azzurra che sale dal basso) e `chiaro`; scelta in `localStorage` `cd_tema`. Movimento «da dashboard», niente doppio asse nei grafici.
 
 ## Dove sono le cose
-- `index.html`: tutta l'app (HTML, CSS, JS), grafici con `lib/chart.umd.js` (Chart.js 4.4.1 locale). Pagine con l'hash: `#oggi`, `#rischio`, `#medie`, `#interesse`, `#strategia`.
+- `index.html`: tutta l'app (HTML, CSS, JS), grafici con `lib/chart.umd.js` (Chart.js 4.4.1 locale). Pagine con l'hash: `#oggi`, `#rischio`, `#medie`, `#interesse`, `#potenza`.
 - `calcoli.py`: chiusure settimanali (domenica UTC), medie, indice di rischio (percentile solo sul passato).
 - `dati.py`: scarica Bitstamp (aggiorna `dati/bitstamp_btcusd_1d.csv`, solo giorni chiusi), alternative.me (paura e avidità), calendario della settimana
   (nfs.faireconomy.media, solo USA importanza alta/media, titoli tradotti in `TRADUZIONI`) e scrive `dati/ciclo.json`. Se una fonte non risponde tiene il dato di prima.

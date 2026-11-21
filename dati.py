@@ -130,6 +130,47 @@ def stato_bot(c: pd.Series):
     return m, pd.Series(serie, index=c.index)
 
 
+GENESI = pd.Timestamp("2009-01-03")
+PL_A, PL_N, PL_SUPPORTO = 1.0117e-17, 5.82, 0.42   # legge di potenza come pubblicata da G. Santostasi (bgeometrics, @Giovann35084111)
+
+
+def potenza(g: pd.DataFrame) -> dict:
+    """Legge di potenza: prezzo settimanale dal 2011, multiplo prezzo/tendenza, prove di stabilità dell'esponente."""
+    d = g.copy()
+    d.index = pd.to_datetime(d["t"], unit="s")
+    giorni = (d.index - GENESI).days.to_numpy()
+    prezzo = d["c"].to_numpy()
+    tend = PL_A * giorni ** PL_N
+    mult = pd.Series(prezzo / tend, index=d.index)
+    w = d["c"].resample("W-SUN").last().dropna()
+    picchi = []
+    for a, b in (("2011", "2012"), ("2013", "2014"), ("2017", "2018"), ("2021", "2021"), ("2024", "2025")):
+        x = mult[a:b]
+        if len(x):
+            picchi.append({"data": str(x.idxmax().date()), "multiplo": round(float(x.max()), 2)})
+    def fit(maschera):
+        n, c = np.polyfit(np.log10(giorni[maschera]), np.log10(prezzo[maschera]), 1)
+        return float(n), float(c)
+    stab_inizio = []
+    for inizio in ("2011-08-18", "2013-01-01", "2015-01-01", "2017-01-01", "2019-01-01"):
+        n, c = fit(d.index >= inizio)
+        stab_inizio.append({"da": inizio, "esponente": round(n, 2), "tendenza_oggi": round(10 ** c * giorni[-1] ** n)})
+    stab_fine = []
+    for fine in ("2017-12-31", "2020-12-31", "2022-12-31", "2024-12-31"):
+        n, c = fit(d.index <= fine)
+        stab_fine.append({"fino_a": fine, "esponente": round(n, 2), "tendenza_oggi": round(10 ** c * giorni[-1] ** n)})
+    sotto = mult[mult < PL_SUPPORTO]
+    return {
+        "A": PL_A, "n": PL_N, "supporto": PL_SUPPORTO, "genesi": "2009-01-03",
+        "t": [str(x.date()) for x in w.index], "c": [round(float(x), 2) for x in w],
+        "multiplo_oggi": round(float(mult.iloc[-1]), 3), "tendenza_oggi": round(float(tend[-1])),
+        "multiplo_minimo": round(float(mult.min()), 3), "data_minimo": str(mult.idxmin().date()),
+        "giorni_sotto_supporto": int(len(sotto)), "prima_volta_sotto": str(sotto.index[0].date()) if len(sotto) else None,
+        "giorni_sotto_tendenza_pct": round(float((mult < 1).mean() * 100)),
+        "picchi": picchi, "stabilita_inizio": stab_inizio, "stabilita_fine": stab_fine,
+    }
+
+
 def r(x, n=2):
     return None if x is None or (isinstance(x, float) and np.isnan(x)) else round(float(x), n)
 
@@ -175,6 +216,7 @@ def main():
         },
         "bot": {"media_giorni": BOT_MEDIA, "banda": BOT_BANDA},
         "prova_rischio": prova,
+        "potenza": potenza(g),
         "paura_avidita": paura_avidita(precedente.get("paura_avidita")),
         "calendario": calendario(precedente.get("calendario")),
     }
