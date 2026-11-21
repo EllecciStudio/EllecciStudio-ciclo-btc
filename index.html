@@ -50,13 +50,16 @@ html[data-tema="chiaro"] body::before{opacity:.06; filter:invert(1)}
 .banda{position:absolute; z-index:0; left:0; right:0; top:0; height:540px; overflow:hidden; pointer-events:none;
   background:linear-gradient(162deg, #0E6FA3 0%, #0A4C73 42%, var(--bg) 100%)}
 html[data-tema="chiaro"] .banda{background:linear-gradient(162deg, #8DD0F5 0%, #C4E6F9 42%, var(--bg) 100%)}
-.banda svg{position:absolute; right:-520px; top:-420px; width:1300px; height:1300px; fill:none; stroke:#A8DFFF; stroke-linecap:round;
-  -webkit-mask-image:linear-gradient(180deg, #000 30%, transparent 62%); mask-image:linear-gradient(180deg, #000 30%, transparent 62%)}
+.banda svg{position:absolute; right:190px; top:42px; width:170px; height:170px; fill:none; stroke:#A8DFFF; stroke-linecap:round;
+  }
 html[data-tema="chiaro"] .banda svg{stroke:#0A7EC6}
-@media (max-width:760px){ .banda{height:430px} .banda svg{right:-600px; top:-380px; width:1000px; height:1000px} }
+@media (max-width:1100px){ .banda svg{right:96px; top:34px; width:150px; height:150px} }
+@media (max-width:760px){ .banda{height:430px} .banda svg{right:64px; top:-6px; width:84px; height:84px; opacity:.7} }
 .intesta .sotto, .intesta .etic{color:rgba(233,236,241,.84)}
 html[data-tema="chiaro"] .intesta .sotto, html[data-tema="chiaro"] .intesta .etic{color:#24384A}
-/* vetro solo dove dietro c'è la fascia: il primo blocco di schede di ogni pagina */
+/* vetro solo dove dietro c'è la fascia: il primo blocco di schede di ogni pagina.
+   Lì i grigi del tema scuro si vedrebbero poco sull'azzurro: dentro il vetro le scritte secondarie diventano bianco attenuato */
+html:not([data-tema="chiaro"]) .pagina > .intesta + * > .scheda{--ink2:rgba(238,244,248,.82); --ink3:rgba(238,244,248,.62); --acc:#B4E5FF; --riga:rgba(255,255,255,.16); --card2:rgba(255,255,255,.08)}
 .pagina > .intesta + * > .scheda{background:rgba(255,255,255,.07); border-color:rgba(255,255,255,.16);
   -webkit-backdrop-filter:blur(20px) saturate(140%); backdrop-filter:blur(20px) saturate(140%)}
 html[data-tema="chiaro"] .pagina > .intesta + * > .scheda{background:rgba(255,255,255,.62); border-color:rgba(255,255,255,.9); box-shadow:0 1px 2px rgba(15,23,42,.06)}
@@ -73,11 +76,13 @@ header.testa{display:flex; align-items:center; justify-content:space-between; ga
 /* sul computer la barra delle sezioni resta sempre in alto mentre scorri (21/11/2026, richiesta di Luigi) */
 @media (min-width:761px){
   html, body{overflow-x:clip}
-  header.testa{position:sticky; top:0; z-index:25; padding:12px 0; margin-bottom:12px}
-  header.testa::before{content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; width:100vw; transform:translateX(-50%);
-    background:var(--bg);
-    border-bottom:1px solid transparent; opacity:0; transition:opacity .25s var(--ease), border-color .25s}
-  header.testa.scorre::before{opacity:1; border-bottom-color:var(--riga)}
+  /* solo l'isola delle sezioni resta fissa (Luigi, 21/11/2026 sera): logo e tema scorrono via con la pagina */
+  header.testa{min-height:48px}
+  .testa nav.menu{position:fixed; z-index:25; top:20px; left:50%; transform:translateX(-50%);
+    transition:background-color .25s var(--ease), border-color .25s var(--ease), box-shadow .25s var(--ease)}
+  .testa nav.menu.scorre{background:rgba(16,21,23,.78); border-color:rgba(255,255,255,.14); box-shadow:0 10px 30px rgba(0,0,0,.35);
+    -webkit-backdrop-filter:blur(16px) saturate(140%); backdrop-filter:blur(16px) saturate(140%)}
+  html[data-tema="chiaro"] .testa nav.menu.scorre{background:rgba(255,255,255,.82); border-color:rgba(15,23,42,.10); box-shadow:0 10px 30px rgba(15,23,42,.10)}
 }
 .marchio{display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink)}
 .marchio svg{height:28px; width:auto}
@@ -227,7 +232,7 @@ nav.menu.basso a{min-width:50px !important; padding:7px 8px !important}
 </style>
 </head>
 <body>
-<div class="banda" aria-hidden="true"><svg viewBox="0 0 1300 1300"><path d="M784 516A190 190 0 1 0 784 784" stroke-width="1.4" style="opacity:0.62"/><path d="M825 475A248 248 0 1 0 825 825" stroke-width="1.4" style="opacity:0.56"/><path d="M866 434A306 306 0 1 0 866 866" stroke-width="3.5" style="opacity:0.50"/><path d="M907 393A364 364 0 1 0 907 907" stroke-width="1.4" style="opacity:0.44"/><path d="M948 352A422 422 0 1 0 948 948" stroke-width="1.4" style="opacity:0.38"/><path d="M989 311A480 480 0 1 0 989 989" stroke-width="1.4" style="opacity:0.32"/><path d="M1030 270A538 538 0 1 0 1030 1030" stroke-width="1.4" style="opacity:0.26"/><path d="M1071 229A596 596 0 1 0 1071 1071" stroke-width="1.4" style="opacity:0.20"/></svg></div>
+<div class="banda" aria-hidden="true"><svg viewBox="0 0 600 600"><path d="M354 255A70 70 0 1 0 354 345" stroke-width="5" style="opacity:0.62"/><path d="M377 236A100 100 0 1 0 377 364" stroke-width="5" style="opacity:0.57"/><path d="M400 216A130 130 0 1 0 400 384" stroke-width="22" style="opacity:0.95"/><path d="M423 197A160 160 0 1 0 423 403" stroke-width="5" style="opacity:0.47"/><path d="M446 178A190 190 0 1 0 446 422" stroke-width="5" style="opacity:0.42"/><path d="M469 159A220 220 0 1 0 469 441" stroke-width="5" style="opacity:0.37"/><path d="M492 139A250 250 0 1 0 492 461" stroke-width="5" style="opacity:0.32"/></svg></div>
 <div class="app">
   <header class="testa">
     <a class="marchio" href="#oggi" aria-label="CycleDial, pagina Oggi">
@@ -515,6 +520,8 @@ const pluginUltimo = { id:"puntoUltimo", afterDatasetsDraw(ch, args, o){
   c.beginPath(); c.arc(p.x, p.y, 5, 0, Math.PI*2); c.fill(); c.stroke(); c.restore();
 }};
 Chart.register(pluginLinea, pluginUltimo);
+/* il grafico sta in una scheda di vetro sopra la fascia azzurra (solo tema scuro)? */
+const sulVetro = ch => document.documentElement.dataset.tema !== "chiaro" && !!(ch && ch.canvas && ch.canvas.closest(".pagina > .intesta + * > .scheda"));
 function baseOpzioni({log=false, assey=true, griglia=true, mini=false, tick=v=>numIt(v/1e3)+"k"} = {}){
   const ink3 = css("--ink3"), grid = css("--grid");
   Chart.defaults.font.family = "IBM Plex Mono, ui-monospace, monospace";
@@ -527,10 +534,10 @@ function baseOpzioni({log=false, assey=true, griglia=true, mini=false, tick=v=>n
       tooltip: mini ? {enabled:false} : {backgroundColor:css("--ink"), titleColor:css("--bg"), bodyColor:css("--bg"), titleFont:{family:"IBM Plex Mono", weight:"500"},
         bodyFont:{family:"IBM Plex Mono"}, cornerRadius:12, padding:10, displayColors:true, boxPadding:4, usePointStyle:true}},
     scales:{
-      x:{display:!mini, grid:{display:false}, border:{display:false}, ticks:{maxTicksLimit: window.innerWidth<560 ? 4 : 7, maxRotation:0, autoSkip:true, font:{size:11},
+      x:{display:!mini, grid:{display:false}, border:{display:false}, ticks:{color:c=>sulVetro(c.chart)?"rgba(238,244,248,.66)":ink3, maxTicksLimit: window.innerWidth<560 ? 4 : 7, maxRotation:0, autoSkip:true, font:{size:11},
           callback(v){ const l = this.getLabelForValue(v); return l ? meseAnno(l) : ""; }}},
-      y:{display:!mini && assey, type: log ? "logarithmic" : "linear", position:"right", grid:{display:griglia, color:grid, drawTicks:false}, border:{display:false},
-         ticks:{font:{size:11}, padding:6, maxTicksLimit:6, callback:v=>tick(v)}}
+      y:{display:!mini && assey, type: log ? "logarithmic" : "linear", position:"right", grid:{display:griglia, color:c=>sulVetro(c.chart)?"rgba(255,255,255,.10)":grid, drawTicks:false}, border:{display:false},
+         ticks:{color:c=>sulVetro(c.chart)?"rgba(238,244,248,.66)":ink3, font:{size:11}, padding:6, maxTicksLimit:6, callback:v=>tick(v)}}
     }
   };
 }
@@ -1003,7 +1010,9 @@ document.addEventListener("click", e=>{ const a = e.target.closest("a[href^='#']
 window.addEventListener("hashchange", ()=>{
   const id = location.hash.slice(1);
   if(document.startViewTransition && !RIDUCI && ultimoTocco){
-    document.documentElement.style.setProperty("--cx", ultimoTocco.x+"px"); document.documentElement.style.setProperty("--cy", ultimoTocco.y+"px");
+    /* il cerchio si apre dal centro della C nella fascia in cima (Luigi, 21/11/2026 sera) */
+    const r = document.querySelector(".banda svg").getBoundingClientRect();
+    document.documentElement.style.setProperty("--cx", (r.left + r.width/2)+"px"); document.documentElement.style.setProperty("--cy", (r.top + r.height/2)+"px");
     document.startViewTransition(()=>mostra(id));
   } else mostra(id);
   ultimoTocco = null;
@@ -1033,8 +1042,8 @@ document.querySelectorAll(".segmenti").forEach(seg=>seg.addEventListener("click"
   if(seg.dataset.periodo==="potenza"){ vistaPot = b.dataset.da; graficoPotenza(); }
 }));
 
-const testa = document.querySelector("header.testa");
-const segnaScorre = () => testa.classList.toggle("scorre", window.scrollY > 8);
+const isola = document.querySelector("header.testa nav.menu");
+const segnaScorre = () => isola.classList.toggle("scorre", window.scrollY > 8);
 window.addEventListener("scroll", segnaScorre, {passive:true}); segnaScorre();
 
 (async function avvio(){
