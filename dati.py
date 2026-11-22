@@ -188,16 +188,17 @@ QUATTRO_ANNI = 1458
 
 
 def cicli(g: pd.DataFrame) -> dict:
-    """Cicli a confronto (prezzo diviso il minimo del ciclo, per giorni dall'halving), ripetizione del ciclo di 4 anni fa,
+    """Cicli a confronto (chiusura divisa il minimo del ciclo, per giorni dall'halving), ripetizione del ciclo di 4 anni fa,
     rendimenti mensili e settimane rosse di fila."""
     d = g.copy()
     d.index = pd.to_datetime(d["t"], unit="s")
     c = d["c"]
+    bassi = d["l"]   # minimi toccati durante il giorno (dal 22/11/2026, scelta di Luigi: il minimo del ciclo è il più basso toccato, non la chiusura)
     ere = []
     for h in HALVING:
         H = pd.Timestamp(h)
         x = c[(c.index >= H - pd.Timedelta(days=1000)) & (c.index <= H + pd.Timedelta(days=500))]
-        fondo = c[(c.index >= H - pd.Timedelta(days=730)) & (c.index <= H)]   # minimo del ciclo: nei 2 anni prima dell'halving
+        fondo = bassi[(bassi.index >= H - pd.Timedelta(days=730)) & (bassi.index <= H)]   # minimo del ciclo: il più basso toccato nei 2 anni prima dell'halving
         if x.empty or fondo.empty or (H - fondo.index[0]).days < 600:
             continue
         minimo, quando = float(fondo.min()), fondo.idxmin()
