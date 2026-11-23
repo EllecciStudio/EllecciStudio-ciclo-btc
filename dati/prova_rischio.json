@@ -40,7 +40,7 @@
     "fascia": "tutte (controprova)",
     "settimane": 521,
     "mediana_pct": 23.1,
-    "media_pct": 53.9,
+    "media_pct": 54.0,
     "positivi_pct": 63.0
    }
   ],
@@ -266,7 +266,7 @@
     "fascia": "tutte (controprova)",
     "settimane": 521,
     "mediana_pct": 23.1,
-    "media_pct": 53.9,
+    "media_pct": 54.0,
     "positivi_pct": 63.0
    }
   ],
@@ -340,9 +340,9 @@
  },
  "ultimo": {
   "settimana": "2026-11-22",
-  "prezzo": 60078.34,
-  "A": 0.04,
-  "B": 0.199,
-  "C": 0.12
+  "prezzo": 61169.55,
+  "A": 0.042,
+  "B": 0.211,
+  "C": 0.127
  }
 }
