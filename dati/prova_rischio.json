@@ -231,7 +231,7 @@
     "fascia": "0-0,2",
     "settimane": 81,
     "mediana_pct": 41.7,
-    "media_pct": 57.3,
+    "media_pct": 57.4,
     "positivi_pct": 81.0
    },
    {
@@ -340,9 +340,9 @@
  },
  "ultimo": {
   "settimana": "2026-11-29",
-  "prezzo": 59743.5,
-  "A": 0.035,
-  "B": 0.199,
-  "C": 0.117
+  "prezzo": 60382.11,
+  "A": 0.04,
+  "B": 0.203,
+  "C": 0.122
  }
 }
